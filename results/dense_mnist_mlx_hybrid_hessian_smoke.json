@@ -1,0 +1,58 @@
+[
+  {
+    "accs_after_task": [
+      [
+        0.993967697995719
+      ],
+      [
+        0.6713368359603036,
+        0.9895083316190084
+      ]
+    ],
+    "name": "Adam+LoRA",
+    "total_backprop_calls": 939,
+    "wall_time": 0.6595609188079834
+  },
+  {
+    "accs_after_task": [
+      [
+        0.993967697995719
+      ],
+      [
+        0.8287604592333139,
+        0.9880682987039704
+      ]
+    ],
+    "name": "Adam+LoRA+EWC",
+    "total_backprop_calls": 939,
+    "wall_time": 0.7052149772644043
+  },
+  {
+    "accs_after_task": [
+      [
+        0.9947460595446584
+      ],
+      [
+        0.9622494648764351,
+        0.9837481999588562
+      ]
+    ],
+    "name": "AVBD-Hessian-LowBP",
+    "scheduler_stats": {
+      "global_backprop_calls": 93,
+      "local_only_steps": 846,
+      "global_ratio": 0.09904153354632587,
+      "last_effective_refresh_period": 10,
+      "max_effective_refresh_period": 10
+    },
+    "total_backprop_calls": 93,
+    "total_optimizer_steps": 939,
+    "constraint_info": {
+      "retain_task_0": {
+        "lambda_": 0.0059677200764419285,
+        "rho": 2.0
+      }
+    },
+    "wall_time": 2.8794350624084473
+  }
+]
