@@ -17,12 +17,15 @@ understand the current claim:
 - `experiments/galt/{hidden_collector_mlx,phase_d_smoke_mlx,phase_d_block_local_mlx}.py`
   - the direct dependency chain needed by the Stage D script
 - `experiments/shared_runtime/continual_runtime_mlx.py`
-  - shared MLX continual-learning helpers used by the public scripts
+  - the canonical MLX continual-learning runtime used by the public scripts;
+    this is the release-facing packaging of the original `moe_continual` runtime
 - `results/galt_prework/stage_d_native_policy_smoke/`
   - selected typed-channel result files, including the strongest single-seed run
-    and the small multiseed check
+    plus the newer counterfactual V2 robustness check
 - `paper/galt_prework/`
   - short experiment reports for typed branches, anti-shadowing, and multiseed
+- `prompts/edit_targets_counterfactual.json`
+  - the pure counterfactual retain benchmark used by the V2 memory-routing line
 - `experiments/precursor_validation/safety_from_birth_mlx.py`
   - the Safety-from-Birth precursor validation path
 - `results/multi_constraint_4task_3seed.json`
@@ -43,9 +46,9 @@ and its immediate runtime dependencies.
 ## Recommended reading order
 
 1. `paper/galt.pdf`
-2. `paper/galt_prework/27_stage_d_typed_multiseed_report.md`
-3. `results/galt_prework/stage_d_native_policy_smoke/typed_output_branches_lr2e4_w05.json`
-4. `results/galt_prework/stage_d_native_policy_smoke/typed_multiseed_baseline_seed41.json`
+2. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json`
+3. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed42.json`
+4. `paper/galt_prework/27_stage_d_typed_multiseed_report.md`
 
 ## Key result files
 
@@ -61,6 +64,22 @@ and its immediate runtime dependencies.
 - `results/galt_prework/stage_d_native_policy_smoke/typed_multiseed_safetyshadow_seed41.json`
 - `results/galt_prework/stage_d_native_policy_smoke/typed_multiseed_safetyshadow_seed42.json`
 - `results/galt_prework/stage_d_native_policy_smoke/typed_multiseed_safetyshadow_seed43.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed41.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed42.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed43.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed44.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed45.json`
+  - five-seed scaffold baseline on the counterfactual retain benchmark
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_routesplit_seed42.json`
+  - same-benchmark control showing route-memory CE sharpens ownership without creating identity
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_identity_t3_seed42.json`
+  - same-benchmark fixed-identity control showing shallow scramble sensitivity
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed41.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed43.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed44.json`
+- `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed45.json`
+  - five-seed typed-route extension showing shallow route identity in 4/5 seeds
 
 ### CSAT / precursor validation line
 
@@ -84,13 +103,18 @@ python experiments/galt/stage_d_native_policy_smoke_mlx.py \
   --allow-online-hf-load \
   --typed-output-branches \
   --output-expert-scale 2.0 \
-  --base-choice-scale 0.0 \
-  --route-task-weight 4.0 \
-  --route-entropy-weight 0.02 \
+  --base-choice-scale 1.0 \
+  --route-task-weight 0.5 \
+  --route-safety-weight 0.5 \
+  --route-memory-identity-weight 0.2 \
+  --route-memory-identity-target 3 \
+  --typed-route-policies \
+  --retain-set-path prompts/edit_targets_counterfactual.json \
+  --route-entropy-weight 0.01 \
   --safety-branch-weight 0.5 \
   --memory-branch-weight 0.5 \
-  --policy-only-warmup-steps 40 \
-  --smoke-steps 40 \
+  --policy-only-warmup-steps 4 \
+  --smoke-steps 8 \
   --seed 42
 ```
 
@@ -117,8 +141,9 @@ python experiments/precursor_validation/split_mnist_mlx.py --allow-online-hf-loa
 - Run commands from inside the `release/` directory so the preserved relative
   imports resolve correctly.
 - `experiments/galt/` is the public-facing Stage D folder name for this release.
-- `experiments/shared_runtime/` holds shared helper code rather than a separate
-  narrative line.
+- `experiments/shared_runtime/continual_runtime_mlx.py` is the canonical runtime
+  in the release bundle and the release-facing packaging of the original
+  `moe_continual` runtime.
 - `experiments/precursor_validation/` collects non-mainline historical
   validation scripts that still support the paper's precursor story.
 - The Stage D MLX script defaults to `--local-files-only`; pass

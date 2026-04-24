@@ -1,0 +1,3456 @@
+{
+  "config": {
+    "model_name": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+    "dataset_source": "ag_news",
+    "local_files_only": true,
+    "max_train_per_task": 16,
+    "max_eval_per_task": 32,
+    "eval_batch_size": 4,
+    "batch_size": 1,
+    "max_length": 256,
+    "lora_rank": 8,
+    "lora_scale": 16.0,
+    "lora_dropout": 0.0,
+    "lr": 5e-05,
+    "seed": 42,
+    "smoke_steps": 8,
+    "outer_step_freq": 4,
+    "replay_size": 4,
+    "safety_eval_size": 32,
+    "retain_eval_size": 32,
+    "avbd_constraint_temperature": 1.5,
+    "forward_margin": 0.0,
+    "safety_margin": 0.0,
+    "retain_margin": 0.0,
+    "rho_p_init": 0.5,
+    "rho_p_min": 0.5,
+    "rho_p_max": 5.0,
+    "rho_p_growth": 1.5,
+    "rho_i": 0.1,
+    "rho_anchor": 0.3,
+    "weight_decay": 0.01,
+    "do_safety_warmup": false,
+    "warmup_epochs": 1,
+    "warmup_lr": 0.0001,
+    "output": "/Users/johnliang/avbd_ml/results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json",
+    "block_size": 4,
+    "num_policies": 4,
+    "expert_rank": 16,
+    "policy_scale": 0.08,
+    "distill_weight": 0.5,
+    "route_task_weight": 0.5,
+    "route_safety_weight": 0.5,
+    "route_memory_weight": 0.0,
+    "route_safety_identity_weight": 0.0,
+    "route_safety_identity_target": 0,
+    "route_memory_identity_weight": 0.2,
+    "route_memory_identity_target": 3,
+    "route_entropy_weight": 0.01,
+    "route_block_weight_power": 2.0,
+    "safety_branch_weight": 0.5,
+    "memory_branch_weight": 0.5,
+    "memory_preference_weight": 0.0,
+    "memory_preference_margin": 0.0,
+    "safety_memory_separation_weight": 0.0,
+    "safety_memory_separation_margin": 0.0,
+    "branch_preference_weight": 0.0,
+    "branch_preference_margin": 0.0,
+    "task_branch_preference": true,
+    "task_shadow_suppression_weight": 0.0,
+    "task_shadow_suppression_margin": 0.0,
+    "safety_shadow_suppression_weight": 0.0,
+    "safety_shadow_suppression_margin": 0.0,
+    "memory_shadow_suppression_weight": 0.0,
+    "memory_shadow_suppression_margin": 0.0,
+    "output_expert_scale": 2.0,
+    "base_choice_scale": 1.0,
+    "typed_output_branches": true,
+    "typed_route_policies": true,
+    "hard_routing": true,
+    "policy_only_warmup_steps": 4,
+    "safety_prompts_path": "/Users/johnliang/avbd_ml/prompts/safety_prompts.json",
+    "retain_set_path": "/Users/johnliang/avbd_ml/prompts/edit_targets_counterfactual.json"
+  },
+  "pre_metrics": {
+    "task_acc": 0.8125,
+    "safety_acc": 1.0,
+    "retain_acc": 0.0
+  },
+  "post_metrics": {
+    "task_acc": 0.78125,
+    "safety_acc": 1.0,
+    "retain_acc": 0.6666666666666666
+  },
+  "pre_route_metrics": {
+    "route_acc": 0.3125,
+    "route_entropy": 1.3775210082530975
+  },
+  "post_route_metrics": {
+    "route_acc": 0.40625,
+    "route_entropy": 1.302978739142418
+  },
+  "model": {
+    "num_layers": 28,
+    "hidden_size": 1536,
+    "architecture": "MacroBlock native policy carrier",
+    "num_policies": 4,
+    "expert_rank": 16,
+    "policy_scale": 0.08,
+    "distill_weight": 0.5,
+    "route_task_weight": 0.5,
+    "route_safety_weight": 0.5,
+    "route_memory_weight": 0.0,
+    "route_safety_identity_weight": 0.0,
+    "route_safety_identity_target": 0,
+    "route_memory_identity_weight": 0.2,
+    "route_memory_identity_target": 3,
+    "route_entropy_weight": 0.01,
+    "route_block_weight_power": 2.0,
+    "safety_branch_weight": 0.5,
+    "memory_branch_weight": 0.5,
+    "memory_preference_weight": 0.0,
+    "memory_preference_margin": 0.0,
+    "safety_memory_separation_weight": 0.0,
+    "safety_memory_separation_margin": 0.0,
+    "branch_preference_weight": 0.0,
+    "branch_preference_margin": 0.0,
+    "task_branch_preference": true,
+    "task_shadow_suppression_weight": 0.0,
+    "task_shadow_suppression_margin": 0.0,
+    "safety_shadow_suppression_weight": 0.0,
+    "safety_shadow_suppression_margin": 0.0,
+    "memory_shadow_suppression_weight": 0.0,
+    "memory_shadow_suppression_margin": 0.0,
+    "output_expert_scale": 2.0,
+    "base_choice_scale": 1.0,
+    "typed_output_branches": true,
+    "typed_route_policies": true,
+    "hard_routing": true,
+    "policy_only_warmup_steps": 4,
+    "probe_prompt_length": 109
+  },
+  "blocks": [
+    {
+      "block_index": 0,
+      "layers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "boundary_layer": 3,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.0.self_attn.q_proj.lora_a",
+        "model.layers.1.self_attn.q_proj.lora_a",
+        "model.layers.2.self_attn.q_proj.lora_a",
+        "model.layers.3.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 1,
+      "layers": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "boundary_layer": 7,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.4.self_attn.q_proj.lora_a",
+        "model.layers.5.self_attn.q_proj.lora_a",
+        "model.layers.6.self_attn.q_proj.lora_a",
+        "model.layers.7.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 2,
+      "layers": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "boundary_layer": 11,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.8.self_attn.q_proj.lora_a",
+        "model.layers.9.self_attn.q_proj.lora_a",
+        "model.layers.10.self_attn.q_proj.lora_a",
+        "model.layers.11.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 3,
+      "layers": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "boundary_layer": 15,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.12.self_attn.q_proj.lora_a",
+        "model.layers.13.self_attn.q_proj.lora_a",
+        "model.layers.14.self_attn.q_proj.lora_a",
+        "model.layers.15.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 4,
+      "layers": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "boundary_layer": 19,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.16.self_attn.q_proj.lora_a",
+        "model.layers.17.self_attn.q_proj.lora_a",
+        "model.layers.18.self_attn.q_proj.lora_a",
+        "model.layers.19.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 5,
+      "layers": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "boundary_layer": 23,
+      "n_params": 1540232,
+      "example_names": [
+        "model.layers.20.self_attn.q_proj.lora_a",
+        "model.layers.21.self_attn.q_proj.lora_a",
+        "model.layers.22.self_attn.q_proj.lora_a",
+        "model.layers.23.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 221320
+    },
+    {
+      "block_index": 6,
+      "layers": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "boundary_layer": 27,
+      "n_params": 1614008,
+      "example_names": [
+        "model.layers.24.self_attn.q_proj.lora_a",
+        "model.layers.25.self_attn.q_proj.lora_a",
+        "model.layers.26.self_attn.q_proj.lora_a",
+        "model.layers.27.self_attn.q_proj.lora_a"
+      ],
+      "layer_n_params": 1318912,
+      "policy_n_params": 295096
+    }
+  ],
+  "d_over_k_by_block": {
+    "0": 385058.0,
+    "1": 385058.0,
+    "2": 385058.0,
+    "3": 385058.0,
+    "4": 385058.0,
+    "5": 385058.0,
+    "6": 403502.0
+  },
+  "modeled_local_solve": {
+    "k_boundary": 4,
+    "sum_d_times_k": 43421600,
+    "max_d_times_k": 6456032,
+    "parallel_gain_upper_bound": 6.725741136351245
+  },
+  "constraint_setup": {
+    "forward_constraint": "per-block policy-state MSE on the probe prompt (num_policies=4)",
+    "safety_constraint": "KL(student || anchor) over safety replay anchor snapshot, block-masked",
+    "retain_constraint": "KL(student || anchor) over retain replay anchor snapshot, block-masked",
+    "distill_objective": "teacher choice KL weight=0.5",
+    "route_objective": "task route CE weight=0.5, power=2.0",
+    "route_safety_objective": "safety replay route CE weight=0.5, power=2.0",
+    "route_memory_objective": "disabled",
+    "route_safety_identity_objective": "disabled",
+    "route_memory_identity_objective": "retain replay fixed-route CE weight=0.2, target=3, power=2.0",
+    "route_entropy_objective": "all-block route entropy weight=0.01, power=2.0",
+    "safety_branch_objective": "safety-branch replay CE weight=0.5",
+    "memory_branch_objective": "memory-branch replay CE weight=0.5",
+    "memory_preference_objective": "disabled",
+    "safety_memory_separation_objective": "disabled",
+    "branch_preference_objective": "disabled",
+    "task_shadow_suppression_objective": "disabled",
+    "safety_shadow_suppression_objective": "disabled",
+    "memory_shadow_suppression_objective": "disabled",
+    "output_experts": "typed route-conditioned output choice experts scale=2.0",
+    "base_choice_path": "dense base choice scores scaled by 1.0",
+    "route_policy_branching": "typed per-branch route readers/carries"
+  },
+  "refresh_steps": [
+    4,
+    8
+  ],
+  "final_block_forward_residuals": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0
+  },
+  "final_block_forward_residual_stats": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0,
+    "mean": 0.0
+  },
+  "route_mode_metrics": {
+    "normal": {
+      "task_acc": 0.78125,
+      "safety_acc": 1.0,
+      "retain_acc": 0.6666666666666666
+    },
+    "zero": {
+      "task_acc": 0.84375,
+      "safety_acc": 1.0,
+      "retain_acc": 0.16666666666666666
+    },
+    "scramble": {
+      "task_acc": 0.78125,
+      "safety_acc": 1.0,
+      "retain_acc": 0.16666666666666666
+    },
+    "scramble_blocks_only": {
+      "task_acc": 0.78125,
+      "safety_acc": 1.0,
+      "retain_acc": 0.6666666666666666
+    },
+    "scramble_output_only": {
+      "task_acc": 0.78125,
+      "safety_acc": 1.0,
+      "retain_acc": 0.3333333333333333
+    }
+  },
+  "branch_matrix": {
+    "task": {
+      "task": 0.78125,
+      "safety": 0.75,
+      "memory": 0.8125
+    },
+    "safety": {
+      "task": 1.0,
+      "safety": 1.0,
+      "memory": 0.96875
+    },
+    "retain": {
+      "task": 0.3333333333333333,
+      "safety": 0.3333333333333333,
+      "memory": 0.6666666666666666
+    }
+  },
+  "branch_specialization": {
+    "task": {
+      "preferred_branch_acc": 0.78125,
+      "best_wrong_branch_acc": 0.8125,
+      "preferred_margin_vs_best_wrong": -0.03125
+    },
+    "safety": {
+      "preferred_branch_acc": 1.0,
+      "best_wrong_branch_acc": 1.0,
+      "preferred_margin_vs_best_wrong": 0.0
+    },
+    "retain": {
+      "preferred_branch_acc": 0.6666666666666666,
+      "best_wrong_branch_acc": 0.3333333333333333,
+      "preferred_margin_vs_best_wrong": 0.3333333333333333
+    }
+  },
+  "necessity_gaps": {
+    "task_zero_gap": -0.0625,
+    "task_scramble_gap": 0.0,
+    "safety_zero_gap": 0.0,
+    "safety_scramble_gap": 0.0,
+    "retain_zero_gap": 0.5,
+    "retain_scramble_gap": 0.5
+  },
+  "step_trace": [
+    {
+      "step": 1,
+      "route_only_phase": true,
+      "task_loss": 3.9478816986083984,
+      "safety_raw": 7.867478757361823e-08,
+      "retain_raw": 1.904714608258473e-08,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 4.1559244425927755,
+          "forward_grad_norm": 3.5170424584421773e-07,
+          "safety_grad_norm": 1.3164290023531275e-05,
+          "retain_grad_norm": 7.809262557206172e-05,
+          "forward_raw": 2.7200464103316335e-15,
+          "forward_residual": 5.6997017964022234e-05,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.9477160380633654e-11,
+              "integral_ema": 2.9477160380633654e-11,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.811870101219753e-09,
+              "integral_ema": 7.811870101219753e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.1791224077105647e-09,
+              "integral_ema": 2.1791224077105647e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 0.7643913279207567,
+          "forward_grad_norm": 0.008222451565696176,
+          "safety_grad_norm": 7.004593978111076e-07,
+          "retain_grad_norm": 5.115895291780499e-06,
+          "forward_raw": 9.120702770815114e-07,
+          "forward_residual": 8.052243356360123e-05,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.5965361487689026e-06,
+              "integral_ema": 1.5965361487689026e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.674728384046146e-09,
+              "integral_ema": 7.674728384046146e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.11864606505685e-09,
+              "integral_ema": 2.11864606505685e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 1.8808559841332118,
+          "forward_grad_norm": 0.011676272157207132,
+          "safety_grad_norm": 7.55483360249861e-07,
+          "retain_grad_norm": 5.139767900539583e-06,
+          "forward_raw": 1.2619145763892448e-06,
+          "forward_residual": 0.00011618792632361874,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.2499589773278524e-06,
+              "integral_ema": 2.2499589773278524e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.636903630858782e-09,
+              "integral_ema": 7.636903630858782e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.0745849781222954e-09,
+              "integral_ema": 2.0745849781222954e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 3.6670734610533504,
+          "forward_grad_norm": 0.01570020872869981,
+          "safety_grad_norm": 8.041955485131403e-07,
+          "retain_grad_norm": 4.493338938637296e-06,
+          "forward_raw": 1.7926819282365614e-06,
+          "forward_residual": 0.00015194137813523412,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 3.050297583565748e-06,
+              "integral_ema": 3.050297583565748e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.611658308839251e-09,
+              "integral_ema": 7.611658308839251e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.896366806555249e-09,
+              "integral_ema": 1.896366806555249e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 7.729400432503247,
+          "forward_grad_norm": 0.024508615328559843,
+          "safety_grad_norm": 7.493068967247285e-07,
+          "retain_grad_norm": 4.078565161139161e-06,
+          "forward_raw": 2.2928193175175693e-06,
+          "forward_residual": 0.00032536068465560675,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 5.052456756404288e-06,
+              "integral_ema": 5.052456756404288e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.824747702711575e-09,
+              "integral_ema": 7.824747702711575e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.190551962524267e-09,
+              "integral_ema": 2.190551962524267e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 21.29606673012956,
+          "forward_grad_norm": 0.06804065230106042,
+          "safety_grad_norm": 4.3194422992075984e-07,
+          "retain_grad_norm": 1.919070780118266e-06,
+          "forward_raw": 4.9036812015401665e-06,
+          "forward_residual": 0.0009738114313222468,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.2560145595327351e-05,
+              "integral_ema": 1.2560145595327351e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.730950053947969e-09,
+              "integral_ema": 7.730950053947969e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.889879400486238e-09,
+              "integral_ema": 1.889879400486238e-09,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": true,
+          "task_grad_norm": 151.85076776022436,
+          "forward_grad_norm": 0.18174235514705103,
+          "safety_grad_norm": 0.0009110456334351726,
+          "retain_grad_norm": 0.0025753129241903824,
+          "forward_raw": 1.4066356015973724e-05,
+          "forward_residual": 0.003922127187252045,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 4.0620255455913524e-05,
+              "integral_ema": 4.0620255455913524e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.5,
+              "rho_p": 0.5,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.2407455471441506e-08,
+              "integral_ema": 1.2407455471441506e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 1
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 2,
+      "route_only_phase": true,
+      "task_loss": 3.628671169281006,
+      "safety_raw": 6.179943738970906e-07,
+      "retain_raw": 1.2406670066411607e-05,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 4.094608696802156,
+          "forward_grad_norm": 0.05221040301035199,
+          "safety_grad_norm": 0.0012945595399251214,
+          "retain_grad_norm": 0.017321753966617982,
+          "forward_raw": 5.69970507058315e-05,
+          "forward_residual": 0.00011651602835627273,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.245215375967775e-06,
+              "integral_ema": 9.245215375967775e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 8.491279563247198e-08,
+              "integral_ema": 8.491279563247198e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 3.499526865146492e-06,
+              "integral_ema": 3.499526865146492e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 0.757967552922191,
+          "forward_grad_norm": 0.08275190387157208,
+          "safety_grad_norm": 6.778820183528431e-05,
+          "retain_grad_norm": 0.0009140047130538178,
+          "forward_raw": 8.6203173850663e-05,
+          "forward_residual": 0.0001723122550174594,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.5869931096537104e-05,
+              "integral_ema": 1.5869931096537104e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.046854174899009e-08,
+              "integral_ema": 9.046854174899009e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.5442670015047988e-06,
+              "integral_ema": 1.5442670015047988e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 1.8521894072525986,
+          "forward_grad_norm": 0.12176783591729172,
+          "safety_grad_norm": 8.015261397718162e-05,
+          "retain_grad_norm": 0.0007419664876222649,
+          "forward_raw": 0.00012582815543282777,
+          "forward_residual": 0.0002582652377896011,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.3408539828711057e-05,
+              "integral_ema": 2.3408539828711057e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.682219244323328e-08,
+              "integral_ema": 9.682219244323328e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.454748425090319e-06,
+              "integral_ema": 1.454748425090319e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 3.5906617900428377,
+          "forward_grad_norm": 0.15839974933537337,
+          "safety_grad_norm": 8.444239800387952e-05,
+          "retain_grad_norm": 0.000733185133761976,
+          "forward_raw": 0.00016543293895665556,
+          "forward_residual": 0.00033973983954638243,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 3.096171878184938e-05,
+              "integral_ema": 3.096171878184938e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.072179802206291e-08,
+              "integral_ema": 9.072179802206291e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.4669726103683406e-06,
+              "integral_ema": 1.4669726103683406e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 7.397868317840907,
+          "forward_grad_norm": 0.3252568875302911,
+          "safety_grad_norm": 7.985905893362187e-05,
+          "retain_grad_norm": 0.0005749925401363565,
+          "forward_raw": 0.000348647910868749,
+          "forward_residual": 0.0006770006730221212,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 6.085998681498815e-05,
+              "integral_ema": 6.085998681498815e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.380568022870457e-08,
+              "integral_ema": 7.380568022870457e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.3938397311709545e-06,
+              "integral_ema": 1.3938397311709545e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 20.438068527826776,
+          "forward_grad_norm": 1.1110576462836814,
+          "safety_grad_norm": 3.949130283359108e-05,
+          "retain_grad_norm": 0.00030010711190320364,
+          "forward_raw": 0.0010274570668116212,
+          "forward_residual": 0.0015720115043222904,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.00014108109083363642,
+              "integral_ema": 0.00014108109083363642,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.224012999055995e-08,
+              "integral_ema": 7.224012999055995e-08,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.3394717169929534e-06,
+              "integral_ema": 1.3394717169929534e-06,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": true,
+          "task_grad_norm": 154.67647761991608,
+          "forward_grad_norm": 3.7889797489229124,
+          "safety_grad_norm": 0.0667377964236441,
+          "retain_grad_norm": 0.4302914372372427,
+          "forward_raw": 0.004020324908196926,
+          "forward_residual": 0.004904022440314293,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0004630849748878032,
+              "integral_ema": 0.0004630849748878032,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.0056967485710684e-05,
+              "integral_ema": 1.0056967485710684e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 0.75,
+              "rho_p": 0.75,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 5.0589768600518266e-05,
+              "integral_ema": 5.0589768600518266e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 2
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 3,
+      "route_only_phase": true,
+      "task_loss": 3.251070499420166,
+      "safety_raw": 0.010076449252665043,
+      "retain_raw": 0.021777089685201645,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 3.9849274927869462,
+          "forward_grad_norm": 0.0745438797344917,
+          "safety_grad_norm": 0.1806975847366503,
+          "retain_grad_norm": 0.5821800699584865,
+          "forward_raw": 0.00011651613749563694,
+          "forward_residual": 0.00016551814042031765,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.298231217438674e-05,
+              "integral_ema": 2.298231217438674e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0010088872017786435,
+              "integral_ema": 0.0010088872017786435,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.002193655594595137,
+              "integral_ema": 0.002193655594595137,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 0.7476708210879217,
+          "forward_grad_norm": 0.11689492816004231,
+          "safety_grad_norm": 0.00883966003713638,
+          "retain_grad_norm": 0.031105134742017024,
+          "forward_raw": 0.00017628478235565126,
+          "forward_residual": 0.0002564703463576734,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 3.7541820482897476e-05,
+              "integral_ema": 3.7541820482897476e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0010086570960780234,
+              "integral_ema": 0.0010086570960780234,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.002182312959796336,
+              "integral_ema": 0.002182312959796336,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 1.859279166254486,
+          "forward_grad_norm": 0.1758692566153459,
+          "safety_grad_norm": 0.011124748290269642,
+          "retain_grad_norm": 0.030882936087161358,
+          "forward_raw": 0.00026699138106778264,
+          "forward_residual": 0.00039358975482173264,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 5.672355019750944e-05,
+              "integral_ema": 5.672355019750944e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0010088229129074863,
+              "integral_ema": 0.0010088229129074863,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0021808379191825835,
+              "integral_ema": 0.0021808379191825835,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 3.622891601728816,
+          "forward_grad_norm": 0.22813297815702502,
+          "safety_grad_norm": 0.011495134530151274,
+          "retain_grad_norm": 0.02839193517236575,
+          "forward_raw": 0.0003521205799188465,
+          "forward_residual": 0.0005246757646091282,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.528884762669285e-05,
+              "integral_ema": 7.528884762669285e-05,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0010085529932450262,
+              "integral_ema": 0.0010085529932450262,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0021805547192795126,
+              "integral_ema": 0.0021805547192795126,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 7.3715798807030835,
+          "forward_grad_norm": 0.4523228368926987,
+          "safety_grad_norm": 0.011216191500856346,
+          "retain_grad_norm": 0.029206908470476363,
+          "forward_raw": 0.000698070100042969,
+          "forward_residual": 0.0009800561238080263,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0001427881569588043,
+              "integral_ema": 0.0001427881569588043,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.001008335857602657,
+              "integral_ema": 0.001008335857602657,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.002180650539894004,
+              "integral_ema": 0.002180650539894004,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 19.3275075537149,
+          "forward_grad_norm": 1.3138801486194194,
+          "safety_grad_norm": 0.0061447246889994684,
+          "retain_grad_norm": 0.01615972508466597,
+          "forward_raw": 0.0016097683692350984,
+          "forward_residual": 0.002177859889343381,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0003078029696045796,
+              "integral_ema": 0.0003078029696045796,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.00100817026407562,
+              "integral_ema": 0.00100817026407562,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0021803220795665397,
+              "integral_ema": 0.0021803220795665397,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": true,
+          "task_grad_norm": 143.07351291226922,
+          "forward_grad_norm": 3.8149913296882474,
+          "safety_grad_norm": 12.75808797560616,
+          "retain_grad_norm": 32.733129617860214,
+          "forward_raw": 0.004919177386909723,
+          "forward_residual": 0.006522998213768005,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0009242349290411101,
+              "integral_ema": 0.0009242349290411101,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.00101771253551958,
+              "integral_ema": 0.00101771253551958,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0,
+              "rho": 1.125,
+              "rho_p": 1.125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.002232102565044124,
+              "integral_ema": 0.002232102565044124,
+              "n_dual_updates": 0,
+              "inner_step_count": 3
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 4,
+      "route_only_phase": true,
+      "task_loss": 4.2987799644470215,
+      "safety_raw": 0.01167607493698597,
+      "retain_raw": 0.04645569249987602,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 9.35969921241081,
+          "forward_grad_norm": 0.08675080799926047,
+          "safety_grad_norm": 0.19276485044823813,
+          "retain_grad_norm": 0.9653299339450856,
+          "forward_raw": 0.00016551828593946993,
+          "forward_residual": 0.0001982773101190105,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 4.030355947131866e-06,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020739993271061115,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006631505220561799,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 0.8632952061277395,
+          "forward_grad_norm": 0.1381362291772936,
+          "safety_grad_norm": 0.009549145701005391,
+          "retain_grad_norm": 0.05038228558084907,
+          "forward_raw": 0.0002610253868624568,
+          "forward_residual": 0.0003301218384876847,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 6.630995385142441e-06,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020759639723584266,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006615702225918591,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 1.8917236043779941,
+          "forward_grad_norm": 0.20984998129548288,
+          "safety_grad_norm": 0.012022679436711347,
+          "retain_grad_norm": 0.045267605350083645,
+          "forward_raw": 0.00040419265860691667,
+          "forward_residual": 0.0005156921106390655,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 1.0181530649620953e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020762322937161045,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612426785222469,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 3.540406540925474,
+          "forward_grad_norm": 0.2735105590669257,
+          "safety_grad_norm": 0.012573316715831282,
+          "retain_grad_norm": 0.046117144267204695,
+          "forward_raw": 0.0005407810094766319,
+          "forward_residual": 0.0006985594518482685,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 1.3645565628200613e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.000207584126139223,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612220171364216,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 7.0952100749304226,
+          "forward_grad_norm": 0.5174036179383629,
+          "safety_grad_norm": 0.012327927126086017,
+          "retain_grad_norm": 0.0402230939418134,
+          "forward_raw": 0.0010072709992527962,
+          "forward_residual": 0.0012140549952164292,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 2.4868696002534377e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020756619932119481,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610682962218236,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": true,
+          "task_grad_norm": 17.4547869569587,
+          "forward_grad_norm": 1.4276334624084939,
+          "safety_grad_norm": 0.006460875664197503,
+          "retain_grad_norm": 0.021605706392907927,
+          "forward_raw": 0.002221542876213789,
+          "forward_residual": 0.0024254373274743557,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 5.1861379473019045e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020753504162045557,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610877855282654,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": true,
+          "task_grad_norm": 385.55902960468376,
+          "forward_grad_norm": 3.835402388130236,
+          "safety_grad_norm": 14.831561087209005,
+          "retain_grad_norm": 40.15028120360736,
+          "forward_raw": 0.006576001178473234,
+          "forward_residual": 0.006733843125402927,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.00015047058900179437,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020840471515977844,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006661398306666363,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 0
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": true
+    },
+    {
+      "step": 5,
+      "route_only_phase": false,
+      "task_loss": 2.899285078048706,
+      "safety_raw": 0.018929950892925262,
+      "retain_raw": 0.07710133492946625,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 82.94390432773002,
+          "forward_grad_norm": 2.1770655492161563e-07,
+          "safety_grad_norm": 4.973217064495223,
+          "retain_grad_norm": 24.592568795885033,
+          "forward_raw": 1.1102230246251565e-15,
+          "forward_residual": 1.7244190530618653e-05,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 4.030355947131866e-06,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.645412754975068e-11,
+              "integral_ema": 2.645412754975068e-11,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020739993271061115,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.001892814367571845,
+              "integral_ema": 0.001892814367571845,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006631505220561799,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007710486614480613,
+              "integral_ema": 0.007710486614480613,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 57.73055410938436,
+          "forward_grad_norm": 0.005271027290994683,
+          "safety_grad_norm": 4.189657836464888,
+          "retain_grad_norm": 18.31005756255781,
+          "forward_raw": 3.8647030464744603e-07,
+          "forward_residual": 1.795929711079225e-05,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 6.630995385142441e-06,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.2484998076440974e-07,
+              "integral_ema": 1.2484998076440974e-07,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020759639723584266,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018930667812091992,
+              "integral_ema": 0.0018930667812091992,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006615702225918591,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007710160666888111,
+              "integral_ema": 0.007710160666888111,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 54.79253027961233,
+          "forward_grad_norm": 0.0022197515724551252,
+          "safety_grad_norm": 4.623757426466924,
+          "retain_grad_norm": 17.066596884903475,
+          "forward_raw": 5.1805820078243414e-08,
+          "forward_residual": 2.2021165932528675e-05,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 1.0181530649620953e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.5617827712728458e-07,
+              "integral_ema": 1.5617827712728458e-07,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020762322937161045,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018929971923888657,
+              "integral_ema": 0.0018929971923888657,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612426785222469,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007709970567850976,
+              "integral_ema": 0.007709970567850976,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 45.88087449197078,
+          "forward_grad_norm": 0.042571154350973535,
+          "safety_grad_norm": 4.60009104759987,
+          "retain_grad_norm": 15.280490141710038,
+          "forward_raw": 1.576264367031399e-05,
+          "forward_residual": 1.1792491932283156e-05,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 1.3645565628200613e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.000207584126139223,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018925540297850963,
+              "integral_ema": 0.0018925540297850963,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612220171364216,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007710074149420251,
+              "integral_ema": 0.007710074149420251,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 36.07171253441507,
+          "forward_grad_norm": 0.057616892987954006,
+          "safety_grad_norm": 4.184702318627094,
+          "retain_grad_norm": 13.18304591797501,
+          "forward_raw": 1.2144450010964647e-05,
+          "forward_residual": 3.868197381962091e-05,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 2.4868696002534377e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020756619932119481,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018924010526224443,
+              "integral_ema": 0.0018924010526224443,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610682962218236,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007710163084189405,
+              "integral_ema": 0.007710163084189405,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 30.429899684376807,
+          "forward_grad_norm": 0.20933555526577483,
+          "safety_grad_norm": 3.1431583301983115,
+          "retain_grad_norm": 9.484922573673705,
+          "forward_raw": 4.5308512198971584e-05,
+          "forward_residual": 5.453512858366594e-05,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 5.1861379473019045e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020753504162045557,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018926104478879276,
+              "integral_ema": 0.0018926104478879276,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610877855282654,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007710340039670116,
+              "integral_ema": 0.007710340039670116,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": false,
+          "task_grad_norm": 133.94706926355215,
+          "forward_grad_norm": 0.3830203974871411,
+          "safety_grad_norm": 14.858014801692503,
+          "retain_grad_norm": 61.1591445779544,
+          "forward_raw": 6.346546433633193e-05,
+          "forward_residual": 0.0004512082086876035,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.00015047058900179437,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.716471318200815e-06,
+              "integral_ema": 7.716471318200815e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020840471515977844,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0018930190644551698,
+              "integral_ema": 0.0018930190644551698,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006661398306666363,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.007711716238300577,
+              "integral_ema": 0.007711716238300577,
+              "n_dual_updates": 1,
+              "inner_step_count": 1
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 6,
+      "route_only_phase": false,
+      "task_loss": 1.7870301008224487,
+      "safety_raw": 0.0771329402923584,
+      "retain_raw": 1.993962287902832,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 20.970391431006057,
+          "forward_grad_norm": 0.02677243571071261,
+          "safety_grad_norm": 5.034141887411532,
+          "retain_grad_norm": 38.378606365419756,
+          "forward_raw": 1.7244283299078234e-05,
+          "forward_residual": 4.433077265275642e-05,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 4.030355947131866e-06,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 3.673758560646271e-06,
+              "integral_ema": 3.673758560646271e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020739993271061115,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.00941638567568804,
+              "integral_ema": 0.00941638567568804,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006631505220561799,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.2063258368501104,
+              "integral_ema": 0.2063258368501104,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 17.482216998656032,
+          "forward_grad_norm": 0.033406784811869844,
+          "safety_grad_norm": 4.337469083349564,
+          "retain_grad_norm": 36.0279757502037,
+          "forward_raw": 1.8394895960227586e-05,
+          "forward_residual": 5.6148441217374057e-05,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 6.630995385142441e-06,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 4.538199962040902e-06,
+              "integral_ema": 4.538199962040902e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020759639723584266,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.009416773648437918,
+              "integral_ema": 0.009416773648437918,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006615702225918591,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.2063255155282711,
+              "integral_ema": 0.2063255155282711,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 19.315364323253032,
+          "forward_grad_norm": 0.04702904446636767,
+          "safety_grad_norm": 4.859070061093531,
+          "retain_grad_norm": 34.08185425484892,
+          "forward_raw": 2.455397043377161e-05,
+          "forward_residual": 7.992070459295064e-05,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 1.0181530649620953e-05,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 6.347591109434619e-06,
+              "integral_ema": 6.347591109434619e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020762322937161045,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.009416570075693116,
+              "integral_ema": 0.009416570075693116,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612426785222469,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.20632535894479093,
+              "integral_ema": 0.20632535894479093,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 20.058172184340982,
+          "forward_grad_norm": 0.053190703996191226,
+          "safety_grad_norm": 4.867653494911661,
+          "retain_grad_norm": 35.38842235828108,
+          "forward_raw": 2.4359847884625196e-05,
+          "forward_residual": 3.3010630431817845e-05,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 1.3645565628200613e-05,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.2248063705463605e-06,
+              "integral_ema": 1.2248063705463605e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.000207584126139223,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.009416157352813656,
+              "integral_ema": 0.009416157352813656,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612220171364216,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.20632546828177065,
+              "integral_ema": 0.20632546828177065,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 20.02921445022128,
+          "forward_grad_norm": 0.1213090327579394,
+          "safety_grad_norm": 4.476053617114109,
+          "retain_grad_norm": 28.9574178428123,
+          "forward_raw": 5.779007915407419e-05,
+          "forward_residual": 0.00013602794206235558,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 2.4868696002534377e-05,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.11320411853249e-06,
+              "integral_ema": 9.11320411853249e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020756619932119481,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.00941598691899388,
+              "integral_ema": 0.00941598691899388,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610682962218236,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.20632556789699308,
+              "integral_ema": 0.20632556789699308,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 22.31036457591055,
+          "forward_grad_norm": 0.18547041325152913,
+          "safety_grad_norm": 3.877740914543748,
+          "retain_grad_norm": 26.862009355619083,
+          "forward_raw": 4.052130680065602e-05,
+          "forward_residual": 0.0002455361245665699,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 5.1861379473019045e-05,
+              "rho": 1.6875,
+              "rho_p": 1.6875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 7.774066334210178e-06,
+              "integral_ema": 7.774066334210178e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020753504162045557,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.009416103329975363,
+              "integral_ema": 0.009416103329975363,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610877855282654,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.20632570818497611,
+              "integral_ema": 0.20632570818497611,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": false,
+          "task_grad_norm": 93.51954842593834,
+          "forward_grad_norm": 1.528435850611858,
+          "safety_grad_norm": 21.499975179422748,
+          "retain_grad_norm": 231.61821849551475,
+          "forward_raw": 0.0006238074856810272,
+          "forward_residual": 0.0008311857236549258,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.00015047058900179437,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 8.427163412932326e-05,
+              "integral_ema": 8.427163412932326e-05,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020840471515977844,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.009416570216076446,
+              "integral_ema": 0.009416570216076446,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006661398306666363,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.2063270151932883,
+              "integral_ema": 0.2063270151932883,
+              "n_dual_updates": 1,
+              "inner_step_count": 2
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 7,
+      "route_only_phase": false,
+      "task_loss": 1.486279845237732,
+      "safety_raw": 0.12647806107997894,
+      "retain_raw": 1.981456995010376,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 5.526027548570013,
+          "forward_grad_norm": 0.04295268129924761,
+          "safety_grad_norm": 7.949499686861081,
+          "retain_grad_norm": 34.58690853611339,
+          "forward_raw": 4.433126377989538e-05,
+          "forward_residual": 6.094814307289198e-05,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 4.030355947131866e-06,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 9.144237506107493e-06,
+              "integral_ema": 9.144237506107493e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020739993271061115,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.021122051660895855,
+              "integral_ema": 0.021122051660895855,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006631505220561799,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.3838291358034942,
+              "integral_ema": 0.3838291358034942,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 5.650261690143287,
+          "forward_grad_norm": 0.05881682831763027,
+          "safety_grad_norm": 6.804362721849258,
+          "retain_grad_norm": 34.0093764570831,
+          "forward_raw": 5.481742482515983e-05,
+          "forward_residual": 8.5713982116431e-05,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 6.630995385142441e-06,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.224746854661026e-05,
+              "integral_ema": 1.224746854661026e-05,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020759639723584266,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.021122341291971918,
+              "integral_ema": 0.021122341291971918,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006615702225918591,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.38382885992551813,
+              "integral_ema": 0.38382885992551813,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 5.3918888583362,
+          "forward_grad_norm": 0.08674698131183602,
+          "safety_grad_norm": 7.655405066603503,
+          "retain_grad_norm": 30.72083918285858,
+          "forward_raw": 7.968027784954756e-05,
+          "forward_residual": 0.00012456753756850958,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 1.0181530649620953e-05,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 1.732473368994952e-05,
+              "integral_ema": 1.732473368994952e-05,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020762322937161045,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.02112214958354665,
+              "integral_ema": 0.02112214958354665,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612426785222469,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.38382872383830235,
+              "integral_ema": 0.38382872383830235,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 5.9260313401880165,
+          "forward_grad_norm": 0.06737476602334158,
+          "safety_grad_norm": 8.278459116450383,
+          "retain_grad_norm": 29.155513765526468,
+          "forward_raw": 3.728641240741126e-05,
+          "forward_residual": 8.586353942519054e-05,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 1.3645565628200613e-05,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 8.122401851774863e-06,
+              "integral_ema": 8.122401851774863e-06,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.000207584126139223,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.02112178571158211,
+              "integral_ema": 0.02112178571158211,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006612220171364216,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.383828847179672,
+              "integral_ema": 0.383828847179672,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 8.417695330797565,
+          "forward_grad_norm": 0.18062732154031513,
+          "safety_grad_norm": 6.8284727741516145,
+          "retain_grad_norm": 26.27414474051423,
+          "forward_raw": 0.0001264474994968623,
+          "forward_residual": 0.00020746534573845565,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 2.4868696002534377e-05,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 2.7487066884873057e-05,
+              "integral_ema": 2.7487066884873057e-05,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020756619932119481,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.021121619840061348,
+              "integral_ema": 0.021121619840061348,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610682962218236,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.38382896991826626,
+              "integral_ema": 0.38382896991826626,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 18.89875949199656,
+          "forward_grad_norm": 0.574195411144806,
+          "safety_grad_norm": 4.581598296848707,
+          "retain_grad_norm": 25.333425020927695,
+          "forward_raw": 0.00029974395874887705,
+          "forward_residual": 0.0004420145123731345,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 5.1861379473019045e-05,
+              "rho": 2.53125,
+              "rho_p": 2.53125,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 4.9486233863641126e-05,
+              "integral_ema": 4.9486233863641126e-05,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020753504162045557,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.021121797346763924,
+              "integral_ema": 0.021121797346763924,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006610877855282654,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.38382912110213374,
+              "integral_ema": 0.38382912110213374,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": false,
+          "task_grad_norm": 48.91860378543562,
+          "forward_grad_norm": 1.7567845306610224,
+          "safety_grad_norm": 21.272394643512268,
+          "retain_grad_norm": 235.25299091132723,
+          "forward_raw": 0.0008176224073395133,
+          "forward_residual": 0.0009937463328242302,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.00015047058900179437,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0001637388327662788,
+              "integral_ema": 0.0001637388327662788,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "safety_alignment": {
+              "lambda_": 0.00020840471515977844,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.02112216427135167,
+              "integral_ema": 0.02112216427135167,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            },
+            "knowledge_retain": {
+              "lambda_": 0.0006661398306666363,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.38383033938805966,
+              "integral_ema": 0.38383033938805966,
+              "n_dual_updates": 1,
+              "inner_step_count": 3
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": false
+    },
+    {
+      "step": 8,
+      "route_only_phase": false,
+      "task_loss": 1.1909669637680054,
+      "safety_raw": 0.1367587298154831,
+      "retain_raw": 1.979682207107544,
+      "blocks": [
+        {
+          "block_index": 0,
+          "layers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 7.116145946303047,
+          "forward_grad_norm": 0.05000287536539495,
+          "safety_grad_norm": 9.85140685290089,
+          "retain_grad_norm": 33.609923363355605,
+          "forward_raw": 6.094843047321774e-05,
+          "forward_residual": 7.278387784026563e-05,
+          "constraint_info": {
+            "route_forward_block_0": {
+              "lambda_": 5.563462203640569e-06,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.0034759086859030624,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500361507136471,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 1,
+          "layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 8.525712778927037,
+          "forward_grad_norm": 0.0727637038326965,
+          "safety_grad_norm": 8.751196070354633,
+          "retain_grad_norm": 36.8586146602707,
+          "forward_raw": 8.39183630887419e-05,
+          "forward_residual": 0.00010768494394142181,
+          "constraint_info": {
+            "route_forward_block_1": {
+              "lambda_": 8.787329232274717e-06,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.0034761301567565587,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500201002644592,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 2,
+          "layers": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 6.10576746431721,
+          "forward_grad_norm": 0.1072915291913114,
+          "safety_grad_norm": 9.937183816093775,
+          "retain_grad_norm": 30.308140675661182,
+          "forward_raw": 0.0001234115188708529,
+          "forward_residual": 0.0001613661297596991,
+          "constraint_info": {
+            "route_forward_block_2": {
+              "lambda_": 1.3297407405797305e-05,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.0034761403293230354,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500166974435751,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 3,
+          "layers": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 6.503050853647006,
+          "forward_grad_norm": 0.10311757358609211,
+          "safety_grad_norm": 10.416187179007766,
+          "retain_grad_norm": 28.85409787367018,
+          "forward_raw": 8.935372170526534e-05,
+          "forward_residual": 0.00014132895739749074,
+          "constraint_info": {
+            "route_forward_block_3": {
+              "lambda_": 1.5686578438136655e-05,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00347606890456143,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500166149413782,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 4,
+          "layers": [
+            16,
+            17,
+            18,
+            19
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 7.820151911841178,
+          "forward_grad_norm": 0.21830169168925567,
+          "safety_grad_norm": 7.97360712020704,
+          "retain_grad_norm": 25.927391435143285,
+          "forward_raw": 0.0002007245784625411,
+          "forward_residual": 0.00026879325741901994,
+          "constraint_info": {
+            "route_forward_block_4": {
+              "lambda_": 2.9956841596837975e-05,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.0034760353430753842,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.055001519744552405,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 5,
+          "layers": [
+            20,
+            21,
+            22,
+            23
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 221320,
+          "route_only_phase": false,
+          "task_grad_norm": 16.120431436164363,
+          "forward_grad_norm": 0.7114401728899533,
+          "safety_grad_norm": 5.048142021091188,
+          "retain_grad_norm": 26.482529996499345,
+          "forward_raw": 0.00047993563930504024,
+          "forward_residual": 0.0005950878257863224,
+          "constraint_info": {
+            "route_forward_block_5": {
+              "lambda_": 6.216833400811602e-05,
+              "rho": 3.796875,
+              "rho_p": 3.796875,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.003476025870833898,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500155408854206,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        },
+        {
+          "block_index": 6,
+          "layers": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "layer_n_params": 1318912,
+          "policy_n_params": 295096,
+          "route_only_phase": false,
+          "task_grad_norm": 36.755795121023645,
+          "forward_grad_norm": 1.7855404086361453,
+          "safety_grad_norm": 29.781794775339545,
+          "retain_grad_norm": 236.58899727457944,
+          "forward_raw": 0.0010587084107100964,
+          "forward_residual": 0.0011307616950944066,
+          "constraint_info": {
+            "route_forward_block_6": {
+              "lambda_": 0.00017639770366152235,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "safety_alignment": {
+              "lambda_": 0.00347692361800473,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            },
+            "knowledge_retain": {
+              "lambda_": 0.05500671917338754,
+              "rho": 5.0,
+              "rho_p": 5.0,
+              "rho_i": 0.1,
+              "rho_anchor": 0.3,
+              "violation_ema": 0.0,
+              "integral_ema": 0.0,
+              "n_dual_updates": 2,
+              "inner_step_count": 0
+            }
+          }
+        }
+      ],
+      "refreshed_forward_targets": true
+    }
+  ],
+  "success_checks": {
+    "finite_step_scalars": true,
+    "all_blocks_have_params": true,
+    "all_blocks_receive_forward_grad": true,
+    "all_blocks_receive_task_grad": true,
+    "forward_targets_refreshed": true,
+    "d_over_k_above_10": true,
+    "route_readout_above_chance": true,
+    "positive_route_zero_gap": false,
+    "positive_route_scramble_gap": false
+  },
+  "overall_pass": false,
+  "architecture_note": "Each macro-block consumes a narrow routing state through specialized expert adapters before local Transformer computation, then updates the routing state from the block summary. Optional route-conditioned output experts inject branch-specific choice scores so task, safety, and memory paths can specialize on the same routing carrier."
+}

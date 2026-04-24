@@ -45,10 +45,10 @@ from phase_d_smoke_mlx import (
     _eval_constraint_value,
     _layer_param_counts,
     _load_model_all_layer_lora,
-    _load_smoke_data,
     _param_count,
     _summary_stats,
 )
+from data import default_categories_for_source, load_continual_tasks, load_edit_samples, load_safety_samples
 from mlx_utils import flatten_tree, scalar
 from continual_runtime_mlx import (
     ExperimentConfig,
@@ -70,6 +70,12 @@ RESULTS_DIR = PORTABLE_ROOT / "results" / "galt_prework" / "stage_d_native_polic
 LAYER_RE = re.compile(r"^(?:model\.)?layers\.(\d+)\.")
 POLICY_READ_RE = re.compile(r"^policy_reads\.(\d+)\.")
 POLICY_CARRY_RE = re.compile(r"^policy_carries\.(\d+)\.")
+TASK_POLICY_READ_RE = re.compile(r"^task_policy_reads\.(\d+)\.")
+SAFETY_POLICY_READ_RE = re.compile(r"^safety_policy_reads\.(\d+)\.")
+MEMORY_POLICY_READ_RE = re.compile(r"^memory_policy_reads\.(\d+)\.")
+TASK_POLICY_CARRY_RE = re.compile(r"^task_policy_carries\.(\d+)\.")
+SAFETY_POLICY_CARRY_RE = re.compile(r"^safety_policy_carries\.(\d+)\.")
+MEMORY_POLICY_CARRY_RE = re.compile(r"^memory_policy_carries\.(\d+)\.")
 POLICY_DOWN_RE = re.compile(r"^policy_downs\.(\d+)\.")
 POLICY_UP_RE = re.compile(r"^policy_ups\.(\d+)\.")
 OUTPUT_HEAD_RE = re.compile(r"^output_choice_heads\.(\d+)\.")
@@ -86,10 +92,20 @@ class StageDNativePolicyConfig(BlockLocalConfig):
     policy_scale: float = 0.08
     distill_weight: float = 0.5
     route_task_weight: float = 0.5
+    route_safety_weight: float = 0.0
+    route_memory_weight: float = 0.0
+    route_safety_identity_weight: float = 0.0
+    route_safety_identity_target: int = 0
+    route_memory_identity_weight: float = 0.0
+    route_memory_identity_target: int = 0
     route_entropy_weight: float = 0.01
     route_block_weight_power: float = 2.0
     safety_branch_weight: float = 0.0
     memory_branch_weight: float = 0.0
+    memory_preference_weight: float = 0.0
+    memory_preference_margin: float = 0.0
+    safety_memory_separation_weight: float = 0.0
+    safety_memory_separation_margin: float = 0.0
     branch_preference_weight: float = 0.0
     branch_preference_margin: float = 0.0
     task_branch_preference: bool = True
@@ -102,8 +118,11 @@ class StageDNativePolicyConfig(BlockLocalConfig):
     output_expert_scale: float = 0.0
     base_choice_scale: float = 1.0
     typed_output_branches: bool = False
+    typed_route_policies: bool = False
     hard_routing: bool = True
     policy_only_warmup_steps: int = 4
+    safety_prompts_path: str = str(PORTABLE_ROOT / "prompts" / "safety_prompts.json")
+    retain_set_path: str = str(PORTABLE_ROOT / "prompts" / "retain_set.json")
     output: str = str(RESULTS_DIR / "summary.json")
 
 
@@ -120,6 +139,7 @@ class MacroBlockPolicyCarrier(nn.Module):
         output_expert_scale: float,
         base_choice_scale: float,
         typed_output_branches: bool,
+        typed_route_policies: bool,
         hard_routing: bool,
         task_choice_token_ids: list[int],
     ):
@@ -134,6 +154,7 @@ class MacroBlockPolicyCarrier(nn.Module):
         self.output_expert_scale = output_expert_scale
         self.base_choice_scale = base_choice_scale
         self.typed_output_branches = typed_output_branches
+        self.typed_route_policies = typed_route_policies
         self.hard_routing = hard_routing
         self.task_choice_token_ids = task_choice_token_ids
         self.route_mode = "normal"
@@ -141,8 +162,16 @@ class MacroBlockPolicyCarrier(nn.Module):
             (start, min(start + block_size, len(self.model.layers)))
             for start in range(0, len(self.model.layers), block_size)
         ]
-        self.policy_reads = [nn.Linear(int(self.args.hidden_size), num_policies) for _ in self.block_ranges]
-        self.policy_carries = [nn.Linear(num_policies, num_policies) for _ in self.block_ranges]
+        if self.typed_route_policies:
+            self.task_policy_reads = [nn.Linear(int(self.args.hidden_size), num_policies) for _ in self.block_ranges]
+            self.safety_policy_reads = [nn.Linear(int(self.args.hidden_size), num_policies) for _ in self.block_ranges]
+            self.memory_policy_reads = [nn.Linear(int(self.args.hidden_size), num_policies) for _ in self.block_ranges]
+            self.task_policy_carries = [nn.Linear(num_policies, num_policies) for _ in self.block_ranges]
+            self.safety_policy_carries = [nn.Linear(num_policies, num_policies) for _ in self.block_ranges]
+            self.memory_policy_carries = [nn.Linear(num_policies, num_policies) for _ in self.block_ranges]
+        else:
+            self.policy_reads = [nn.Linear(int(self.args.hidden_size), num_policies) for _ in self.block_ranges]
+            self.policy_carries = [nn.Linear(num_policies, num_policies) for _ in self.block_ranges]
         n_experts = len(self.block_ranges) * num_policies
         self.policy_downs = [nn.Linear(int(self.args.hidden_size), expert_rank) for _ in range(n_experts)]
         self.policy_ups = [nn.Linear(expert_rank, int(self.args.hidden_size)) for _ in range(n_experts)]
@@ -164,6 +193,9 @@ class MacroBlockPolicyCarrier(nn.Module):
     def output_branch_names(self) -> tuple[str, ...]:
         return OUTPUT_BRANCH_NAMES if self.typed_output_branches else ("shared",)
 
+    def route_branch_names(self) -> tuple[str, ...]:
+        return OUTPUT_BRANCH_NAMES if self.typed_route_policies else ("shared",)
+
     def _output_heads_for_branch(self, branch_name: str):
         if not self.typed_output_branches:
             return self.output_choice_heads
@@ -176,18 +208,43 @@ class MacroBlockPolicyCarrier(nn.Module):
             raise ValueError(f"Unsupported output branch: {branch_name}")
         return branch_map[branch_name]
 
+    def _policy_readers_for_branch(self, branch_name: str):
+        if not self.typed_route_policies:
+            return self.policy_reads
+        branch_map = {
+            "task": self.task_policy_reads,
+            "safety": self.safety_policy_reads,
+            "memory": self.memory_policy_reads,
+        }
+        if branch_name not in branch_map:
+            raise ValueError(f"Unsupported route branch: {branch_name}")
+        return branch_map[branch_name]
+
+    def _policy_carries_for_branch(self, branch_name: str):
+        if not self.typed_route_policies:
+            return self.policy_carries
+        branch_map = {
+            "task": self.task_policy_carries,
+            "safety": self.safety_policy_carries,
+            "memory": self.memory_policy_carries,
+        }
+        if branch_name not in branch_map:
+            raise ValueError(f"Unsupported route branch: {branch_name}")
+        return branch_map[branch_name]
+
     def _reset_policy_modules(self):
         hidden_size = int(self.args.hidden_size)
         read_scale = 0.02 / math.sqrt(hidden_size)
         down_scale = 0.02 / math.sqrt(hidden_size)
         up_scale = 0.02 / math.sqrt(max(1, self.expert_rank))
         carry_eye = 0.5 * mx.eye(self.num_policies)
-        for reader in self.policy_reads:
-            reader.weight = mx.random.normal(shape=reader.weight.shape) * read_scale
-            reader.bias = mx.zeros(reader.bias.shape)
-        for carry in self.policy_carries:
-            carry.weight = carry_eye
-            carry.bias = mx.zeros(carry.bias.shape)
+        for branch_name in self.route_branch_names():
+            for reader in self._policy_readers_for_branch(branch_name):
+                reader.weight = mx.random.normal(shape=reader.weight.shape) * read_scale
+                reader.bias = mx.zeros(reader.bias.shape)
+            for carry in self._policy_carries_for_branch(branch_name):
+                carry.weight = carry_eye
+                carry.bias = mx.zeros(carry.bias.shape)
         for down in self.policy_downs:
             down.weight = mx.random.normal(shape=down.weight.shape) * down_scale
             down.bias = mx.zeros(down.bias.shape)
@@ -200,15 +257,19 @@ class MacroBlockPolicyCarrier(nn.Module):
                 head.bias = mx.zeros(head.bias.shape)
 
     def set_route_mode(self, mode: str):
-        if mode not in {"normal", "zero", "scramble"}:
+        if mode not in {"normal", "zero", "scramble", "scramble_blocks_only", "scramble_output_only"}:
             raise ValueError(f"Unsupported route mode: {mode}")
         self.route_mode = mode
 
-    def _transform_route(self, block_index: int, route: mx.array) -> mx.array:
+    def _transform_route(self, block_index: int, route: mx.array, *, for_output: bool = False) -> mx.array:
         if self.route_mode == "normal":
             return route
         if self.route_mode == "zero":
             return mx.ones(route.shape, dtype=route.dtype) * (1.0 / self.num_policies)
+        if self.route_mode == "scramble_blocks_only":
+            return route if for_output else mx.take(route, self.route_permutations[block_index], axis=-1)
+        if self.route_mode == "scramble_output_only":
+            return mx.take(route, self.route_permutations[block_index], axis=-1) if for_output else route
         return mx.take(route, self.route_permutations[block_index], axis=-1)
 
     def _expert_index(self, block_index: int, expert_index: int) -> int:
@@ -228,7 +289,7 @@ class MacroBlockPolicyCarrier(nn.Module):
                 mixed = mixed + route[:, expert_index][:, None, None] * expert_out
         return h + self.policy_scale * mixed
 
-    def _run_blocks(self, inputs: mx.array, input_embeddings: mx.array | None = None):
+    def _run_blocks(self, inputs: mx.array, input_embeddings: mx.array | None = None, branch_name: str = "task"):
         if input_embeddings is not None:
             h = input_embeddings
         else:
@@ -236,15 +297,17 @@ class MacroBlockPolicyCarrier(nn.Module):
         route = mx.ones((h.shape[0], self.num_policies), dtype=h.dtype) * (1.0 / self.num_policies)
         route_map: dict[int, mx.array] = {}
         route_logits_map: dict[int, mx.array] = {}
+        branch_readers = self._policy_readers_for_branch(branch_name)
+        branch_carries = self._policy_carries_for_branch(branch_name)
 
         for block_index, (start, end) in enumerate(self.block_ranges):
-            consumed_route = self._transform_route(block_index, route)
+            consumed_route = self._transform_route(block_index, route, for_output=False)
             h = self._apply_policy_experts(block_index, h, consumed_route)
             mask = create_attention_mask(h, None)
             for layer in self.model.layers[start:end]:
                 h = layer(h, mask, None)
             summary = h[:, -1, :]
-            route_logits = self.policy_reads[block_index](summary) + self.policy_carries[block_index](consumed_route)
+            route_logits = branch_readers[block_index](summary) + branch_carries[block_index](consumed_route)
             route = mx.softmax(route_logits.astype(mx.float32), axis=-1).astype(h.dtype)
             route_map[block_index] = route
             route_logits_map[block_index] = route_logits
@@ -267,15 +330,15 @@ class MacroBlockPolicyCarrier(nn.Module):
     def __call__(self, inputs: mx.array, cache=None, input_embeddings: mx.array | None = None):
         if cache is not None:
             raise ValueError("Stage D native policy smoke does not support KV cache.")
-        out, _, _ = self._run_blocks(inputs, input_embeddings=input_embeddings)
+        out, _, _ = self._run_blocks(inputs, input_embeddings=input_embeddings, branch_name="task")
         if self.args.tie_word_embeddings:
             return self.model.embed_tokens.as_linear(out)
         return self.lm_head(out)
 
     def forward_with_policy_states(self, inputs: mx.array, input_embeddings: mx.array | None = None, branch_name: str = "task"):
-        out, route_map, route_logits_map = self._run_blocks(inputs, input_embeddings=input_embeddings)
+        out, route_map, route_logits_map = self._run_blocks(inputs, input_embeddings=input_embeddings, branch_name=branch_name)
         final_block_index = max(route_map)
-        final_route = self._transform_route(final_block_index, route_map[final_block_index])
+        final_route = self._transform_route(final_block_index, route_map[final_block_index], for_output=True)
         final_summary = out[:, -1, :]
         output_choice_scores = self._output_choice_scores(final_summary, final_route, branch_name=branch_name)
         if self.args.tie_word_embeddings:
@@ -290,6 +353,24 @@ def _policy_block_index(name: str, num_policies: int, num_blocks: int) -> int | 
     if match:
         return int(match.group(1))
     match = POLICY_CARRY_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = TASK_POLICY_READ_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = SAFETY_POLICY_READ_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = MEMORY_POLICY_READ_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = TASK_POLICY_CARRY_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = SAFETY_POLICY_CARRY_RE.match(name)
+    if match:
+        return int(match.group(1))
+    match = MEMORY_POLICY_CARRY_RE.match(name)
     if match:
         return int(match.group(1))
     match = POLICY_DOWN_RE.match(name)
@@ -362,15 +443,6 @@ def _mask_policy_only(flat_map: dict[str, mx.array], block_index: int, num_polic
 
 def _all_choices_are_single_token(choice_token_ids: list[list[int]]) -> bool:
     return all(len(choice_ids) == 1 for choice_ids in choice_token_ids)
-
-
-def _infer_choice_count_from_samples(samples: list[dict]) -> int:
-    for sample in samples:
-        prompt = sample.get("prompt", "")
-        count = sum(1 for line in prompt.splitlines() if re.match(r"^[A-J]\.\s", line.strip()))
-        if count:
-            return count
-    raise ValueError("Could not infer task choice count from the provided samples.")
 
 
 def _compute_choice_scores_from_logits(logits: mx.array, choice_token_ids: list[list[int]]) -> mx.array:
@@ -561,11 +633,18 @@ def _route_block_weights(num_blocks: int, power: float) -> list[float]:
     return [value / total for value in raw]
 
 
-def _route_logits_batch(module: MacroBlockPolicyCarrier, prompt_token_batches: list[list[int]]) -> list[mx.array]:
+def _route_logits_batch(
+    module: MacroBlockPolicyCarrier,
+    prompt_token_batches: list[list[int]],
+    branch_name: str = "task",
+) -> list[mx.array]:
     per_block_logits: list[list[mx.array]] | None = None
     for prompt_ids in prompt_token_batches:
         token_array = mx.array([prompt_ids], dtype=mx.int32)
-        _logits, _route_map, route_logits_map, _output_choice_scores = module.forward_with_policy_states(token_array)
+        _logits, _route_map, route_logits_map, _output_choice_scores = module.forward_with_policy_states(
+            token_array,
+            branch_name=branch_name,
+        )
         block_logits = [route_logits_map[block_index][0] for block_index in sorted(route_logits_map)]
         if per_block_logits is None:
             per_block_logits = [[] for _ in block_logits]
@@ -576,24 +655,32 @@ def _route_logits_batch(module: MacroBlockPolicyCarrier, prompt_token_batches: l
     return [mx.stack(block_logits, axis=0) for block_logits in per_block_logits]
 
 
+def _constant_policy_targets(batch_size: int, target_policy: int) -> mx.array:
+    return mx.array([target_policy] * batch_size, dtype=mx.int32)
+
+
 def _route_policy_loss(
     module: MacroBlockPolicyCarrier,
     prompt_token_batches: list[list[int]],
-    labels: mx.array,
-    cfg: StageDNativePolicyConfig,
+    targets: mx.array,
+    *,
+    branch_name: str,
+    route_weight: float,
+    entropy_weight: float,
+    block_weight_power: float,
 ) -> mx.array:
     loss = mx.array(0.0, dtype=mx.float32)
-    if cfg.route_task_weight <= 0.0 and cfg.route_entropy_weight <= 0.0:
+    if route_weight <= 0.0 and entropy_weight <= 0.0:
         return loss
-    block_logits_batch = _route_logits_batch(module, prompt_token_batches)
-    weights = _route_block_weights(len(block_logits_batch), cfg.route_block_weight_power)
+    block_logits_batch = _route_logits_batch(module, prompt_token_batches, branch_name=branch_name)
+    weights = _route_block_weights(len(block_logits_batch), block_weight_power)
     for weight, scores in zip(weights, block_logits_batch):
-        if cfg.route_task_weight > 0.0:
-            loss = loss + (cfg.route_task_weight * weight) * cross_entropy_from_scores(scores, labels)
-        if cfg.route_entropy_weight > 0.0:
+        if route_weight > 0.0:
+            loss = loss + (route_weight * weight) * cross_entropy_from_scores(scores, targets)
+        if entropy_weight > 0.0:
             probs = mx.softmax(scores.astype(mx.float32), axis=-1)
             entropy = -mx.mean(mx.sum(probs * mx.log(probs + 1e-8), axis=-1))
-            loss = loss + (cfg.route_entropy_weight * weight) * entropy
+            loss = loss + (entropy_weight * weight) * entropy
     return loss
 
 
@@ -615,6 +702,20 @@ def _route_residual(model: MacroBlockPolicyCarrier, prompt_ids: list[int], block
     current = route_map[block_index]
     diff = current - target_route
     return scalar(mx.mean(diff * diff))
+
+
+def _load_stage_d_smoke_data(cfg: StageDNativePolicyConfig):
+    tasks = load_continual_tasks(
+        dataset_source=cfg.dataset_source,
+        categories=default_categories_for_source(cfg.dataset_source),
+        max_train_per_task=cfg.max_train_per_task,
+        max_eval_per_task=cfg.max_eval_per_task,
+        seed=cfg.seed,
+        local_files_only=cfg.local_files_only,
+    )
+    safety_samples = load_safety_samples(cfg.safety_prompts_path)
+    retain_samples = load_edit_samples(cfg.retain_set_path)
+    return tasks, safety_samples, retain_samples
 
 
 def _evaluate_route_metrics(
@@ -648,7 +749,7 @@ def _evaluate_route_metrics(
 def _evaluate_route_modes(model, tokenizer, task, safety_samples, retain_samples, choice_token_ids, eval_cfg):
     metrics = {}
     original_mode = getattr(model, "route_mode", "normal")
-    for mode in ("normal", "zero", "scramble"):
+    for mode in ("normal", "zero", "scramble", "scramble_blocks_only", "scramble_output_only"):
         model.set_route_mode(mode)
         metrics[mode] = {
             "task_acc": _evaluate_local(model, tokenizer, task.eval_samples, choice_token_ids, eval_cfg, branch_name="task"),
@@ -703,15 +804,19 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
 
     base_model, tokenizer = _load_model_all_layer_lora(cfg)
     choice_token_ids = get_choice_token_ids(tokenizer)
-    tasks, safety_samples, retain_samples = _load_smoke_data(cfg)
+    tasks, safety_samples, retain_samples = _load_stage_d_smoke_data(cfg)
     task = tasks[0]
-    task_samples = list(task.train_samples) + list(task.eval_samples)
-    observed_label_count = int(mx.max(batch_labels(task_samples)).item()) + 1
-    task_label_count = max(observed_label_count, _infer_choice_count_from_samples(task_samples))
+    task_label_count = int(mx.max(batch_labels(task.train_samples)).item()) + 1
     if cfg.num_policies != task_label_count:
         raise ValueError(
             f"num_policies={cfg.num_policies} must match number of task labels={task_label_count} for this smoke."
         )
+    for field_name, target_policy in (
+        ("route_safety_identity_target", cfg.route_safety_identity_target),
+        ("route_memory_identity_target", cfg.route_memory_identity_target),
+    ):
+        if not 0 <= int(target_policy) < cfg.num_policies:
+            raise ValueError(f"{field_name}={target_policy} must be in [0, {cfg.num_policies - 1}]")
     if not _all_choices_are_single_token(choice_token_ids):
         raise ValueError("Stage D native policy smoke currently expects single-token choice tokens.")
     task_choice_token_ids = [choice_ids[0] for choice_ids in choice_token_ids[: cfg.num_policies]]
@@ -732,6 +837,7 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
         output_expert_scale=cfg.output_expert_scale,
         base_choice_scale=cfg.base_choice_scale,
         typed_output_branches=cfg.typed_output_branches,
+        typed_route_policies=cfg.typed_route_policies,
         hard_routing=cfg.hard_routing,
         task_choice_token_ids=task_choice_token_ids,
     )
@@ -757,6 +863,8 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
     safety_replay_labels = batch_labels(safety_replay)
     retain_replay_tokens = tokenize_prompts(tokenizer, [sample["prompt"] for sample in retain_replay], cfg.max_length)
     retain_replay_labels = batch_labels(retain_replay)
+    safety_identity_targets = _constant_policy_targets(len(safety_replay_tokens), cfg.route_safety_identity_target)
+    retain_identity_targets = _constant_policy_targets(len(retain_replay_tokens), cfg.route_memory_identity_target)
     safety_anchor = _compute_replay_anchor_probs_local(
         model,
         tokenizer,
@@ -859,6 +967,34 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
                 branch_name="memory",
             )
             loss = loss + cfg.memory_branch_weight * cross_entropy_from_scores(memory_scores, retain_replay_labels)
+        if cfg.typed_output_branches and cfg.memory_preference_weight > 0.0:
+            loss = loss + cfg.memory_preference_weight * _branch_preference_loss(
+                module,
+                retain_replay_tokens,
+                retain_replay_labels,
+                choice_token_ids,
+                preferred_branch="memory",
+                margin=cfg.memory_preference_margin,
+            )
+        if cfg.typed_output_branches and cfg.safety_memory_separation_weight > 0.0:
+            loss = loss + cfg.safety_memory_separation_weight * _branch_vs_branch_margin_loss(
+                module,
+                safety_replay_tokens,
+                safety_replay_labels,
+                choice_token_ids,
+                preferred_branch="safety",
+                competing_branch="memory",
+                margin=cfg.safety_memory_separation_margin,
+            )
+            loss = loss + cfg.safety_memory_separation_weight * _branch_vs_branch_margin_loss(
+                module,
+                retain_replay_tokens,
+                retain_replay_labels,
+                choice_token_ids,
+                preferred_branch="memory",
+                competing_branch="safety",
+                margin=cfg.safety_memory_separation_margin,
+            )
         if cfg.typed_output_branches and cfg.branch_preference_weight > 0.0:
             if cfg.task_branch_preference:
                 loss = loss + cfg.branch_preference_weight * _branch_preference_loss(
@@ -924,7 +1060,56 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
                 competing_branch="task",
                 margin=cfg.memory_shadow_suppression_margin,
             )
-        return loss + _route_policy_loss(module, prompt_tokens, labels, cfg)
+        loss = loss + _route_policy_loss(
+            module,
+            prompt_tokens,
+            labels,
+            branch_name="task",
+            route_weight=cfg.route_task_weight,
+            entropy_weight=cfg.route_entropy_weight,
+            block_weight_power=cfg.route_block_weight_power,
+        )
+        if cfg.typed_output_branches and cfg.route_safety_weight > 0.0:
+            loss = loss + _route_policy_loss(
+                module,
+                safety_replay_tokens,
+                safety_replay_labels,
+                branch_name="safety",
+                route_weight=cfg.route_safety_weight,
+                entropy_weight=0.0,
+                block_weight_power=cfg.route_block_weight_power,
+            )
+        if cfg.typed_output_branches and cfg.route_memory_weight > 0.0:
+            loss = loss + _route_policy_loss(
+                module,
+                retain_replay_tokens,
+                retain_replay_labels,
+                branch_name="memory",
+                route_weight=cfg.route_memory_weight,
+                entropy_weight=0.0,
+                block_weight_power=cfg.route_block_weight_power,
+            )
+        if cfg.typed_output_branches and cfg.route_safety_identity_weight > 0.0:
+            loss = loss + _route_policy_loss(
+                module,
+                safety_replay_tokens,
+                safety_identity_targets,
+                branch_name="safety",
+                route_weight=cfg.route_safety_identity_weight,
+                entropy_weight=0.0,
+                block_weight_power=cfg.route_block_weight_power,
+            )
+        if cfg.typed_output_branches and cfg.route_memory_identity_weight > 0.0:
+            loss = loss + _route_policy_loss(
+                module,
+                retain_replay_tokens,
+                retain_identity_targets,
+                branch_name="memory",
+                route_weight=cfg.route_memory_identity_weight,
+                entropy_weight=0.0,
+                block_weight_power=cfg.route_block_weight_power,
+            )
+        return loss
 
     task_grad_fn = nn.value_and_grad(model, task_loss)
     safety_grad_fn = nn.value_and_grad(model, safety_constraint_fn)
@@ -1123,10 +1308,20 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
             "policy_scale": cfg.policy_scale,
             "distill_weight": cfg.distill_weight,
             "route_task_weight": cfg.route_task_weight,
+            "route_safety_weight": cfg.route_safety_weight,
+            "route_memory_weight": cfg.route_memory_weight,
+            "route_safety_identity_weight": cfg.route_safety_identity_weight,
+            "route_safety_identity_target": cfg.route_safety_identity_target,
+            "route_memory_identity_weight": cfg.route_memory_identity_weight,
+            "route_memory_identity_target": cfg.route_memory_identity_target,
             "route_entropy_weight": cfg.route_entropy_weight,
             "route_block_weight_power": cfg.route_block_weight_power,
             "safety_branch_weight": cfg.safety_branch_weight,
             "memory_branch_weight": cfg.memory_branch_weight,
+            "memory_preference_weight": cfg.memory_preference_weight,
+            "memory_preference_margin": cfg.memory_preference_margin,
+            "safety_memory_separation_weight": cfg.safety_memory_separation_weight,
+            "safety_memory_separation_margin": cfg.safety_memory_separation_margin,
             "branch_preference_weight": cfg.branch_preference_weight,
             "branch_preference_margin": cfg.branch_preference_margin,
             "task_branch_preference": cfg.task_branch_preference,
@@ -1139,6 +1334,7 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
             "output_expert_scale": cfg.output_expert_scale,
             "base_choice_scale": cfg.base_choice_scale,
             "typed_output_branches": cfg.typed_output_branches,
+            "typed_route_policies": cfg.typed_route_policies,
             "hard_routing": cfg.hard_routing,
             "policy_only_warmup_steps": cfg.policy_only_warmup_steps,
             "probe_prompt_length": len(probe_tokens),
@@ -1151,13 +1347,43 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
             "safety_constraint": "KL(student || anchor) over safety replay anchor snapshot, block-masked",
             "retain_constraint": "KL(student || anchor) over retain replay anchor snapshot, block-masked",
             "distill_objective": f"teacher choice KL weight={cfg.distill_weight}" if cfg.distill_weight > 0.0 else "disabled",
-            "route_objective": f"all-block route CE weight={cfg.route_task_weight}, power={cfg.route_block_weight_power}" if cfg.route_task_weight > 0.0 else "disabled",
+            "route_objective": f"task route CE weight={cfg.route_task_weight}, power={cfg.route_block_weight_power}" if cfg.route_task_weight > 0.0 else "disabled",
+            "route_safety_objective": (
+                f"safety replay route CE weight={cfg.route_safety_weight}, power={cfg.route_block_weight_power}"
+                if cfg.typed_output_branches and cfg.route_safety_weight > 0.0
+                else "disabled"
+            ),
+            "route_memory_objective": (
+                f"retain replay route CE weight={cfg.route_memory_weight}, power={cfg.route_block_weight_power}"
+                if cfg.typed_output_branches and cfg.route_memory_weight > 0.0
+                else "disabled"
+            ),
+            "route_safety_identity_objective": (
+                f"safety replay fixed-route CE weight={cfg.route_safety_identity_weight}, target={cfg.route_safety_identity_target}, power={cfg.route_block_weight_power}"
+                if cfg.typed_output_branches and cfg.route_safety_identity_weight > 0.0
+                else "disabled"
+            ),
+            "route_memory_identity_objective": (
+                f"retain replay fixed-route CE weight={cfg.route_memory_identity_weight}, target={cfg.route_memory_identity_target}, power={cfg.route_block_weight_power}"
+                if cfg.typed_output_branches and cfg.route_memory_identity_weight > 0.0
+                else "disabled"
+            ),
             "route_entropy_objective": f"all-block route entropy weight={cfg.route_entropy_weight}, power={cfg.route_block_weight_power}" if cfg.route_entropy_weight > 0.0 else "disabled",
             "safety_branch_objective": (
                 f"safety-branch replay CE weight={cfg.safety_branch_weight}" if cfg.typed_output_branches and cfg.safety_branch_weight > 0.0 else "disabled"
             ),
             "memory_branch_objective": (
                 f"memory-branch replay CE weight={cfg.memory_branch_weight}" if cfg.typed_output_branches and cfg.memory_branch_weight > 0.0 else "disabled"
+            ),
+            "memory_preference_objective": (
+                f"memory branch must beat task+safety on retain replay weight={cfg.memory_preference_weight}, margin={cfg.memory_preference_margin}"
+                if cfg.typed_output_branches and cfg.memory_preference_weight > 0.0
+                else "disabled"
+            ),
+            "safety_memory_separation_objective": (
+                f"safety must beat memory on safety replay and memory must beat safety on retain replay weight={cfg.safety_memory_separation_weight}, margin={cfg.safety_memory_separation_margin}"
+                if cfg.typed_output_branches and cfg.safety_memory_separation_weight > 0.0
+                else "disabled"
             ),
             "branch_preference_objective": (
                 f"preferred-branch margin weight={cfg.branch_preference_weight}, margin={cfg.branch_preference_margin}, task_enabled={cfg.task_branch_preference}"
@@ -1187,6 +1413,7 @@ def run_stage_d_native_policy_smoke(cfg: StageDNativePolicyConfig) -> dict:
                 else "disabled"
             ),
             "base_choice_path": f"dense base choice scores scaled by {cfg.base_choice_scale}",
+            "route_policy_branching": "typed per-branch route readers/carries" if cfg.typed_route_policies else "shared route readers/carries",
         },
         "refresh_steps": refresh_steps,
         "final_block_forward_residuals": final_block_residuals,
@@ -1237,9 +1464,7 @@ def parse_args() -> StageDNativePolicyConfig:
     parser = argparse.ArgumentParser(description="Stage D native policy smoke on real Qwen-MLX.")
     parser.add_argument("--model-name", default=BlockLocalConfig.model_name)
     parser.add_argument("--dataset-source", default="ag_news")
-    parser.add_argument("--local-files-only", dest="local_files_only", action="store_true")
-    parser.add_argument("--allow-online-hf-load", dest="local_files_only", action="store_false")
-    parser.set_defaults(local_files_only=True)
+    parser.add_argument("--local-files-only", action="store_true", default=True)
     parser.add_argument("--max-train-per-task", type=int, default=16)
     parser.add_argument("--max-eval-per-task", type=int, default=32)
     parser.add_argument("--eval-batch-size", type=int, default=4)
@@ -1272,10 +1497,20 @@ def parse_args() -> StageDNativePolicyConfig:
     parser.add_argument("--policy-scale", type=float, default=0.08)
     parser.add_argument("--distill-weight", type=float, default=0.5)
     parser.add_argument("--route-task-weight", type=float, default=0.5)
+    parser.add_argument("--route-safety-weight", type=float, default=0.0)
+    parser.add_argument("--route-memory-weight", type=float, default=0.0)
+    parser.add_argument("--route-safety-identity-weight", type=float, default=0.0)
+    parser.add_argument("--route-safety-identity-target", type=int, default=0)
+    parser.add_argument("--route-memory-identity-weight", type=float, default=0.0)
+    parser.add_argument("--route-memory-identity-target", type=int, default=0)
     parser.add_argument("--route-entropy-weight", type=float, default=0.01)
     parser.add_argument("--route-block-weight-power", type=float, default=2.0)
     parser.add_argument("--safety-branch-weight", type=float, default=0.0)
     parser.add_argument("--memory-branch-weight", type=float, default=0.0)
+    parser.add_argument("--memory-preference-weight", type=float, default=0.0)
+    parser.add_argument("--memory-preference-margin", type=float, default=0.0)
+    parser.add_argument("--safety-memory-separation-weight", type=float, default=0.0)
+    parser.add_argument("--safety-memory-separation-margin", type=float, default=0.0)
     parser.add_argument("--branch-preference-weight", type=float, default=0.0)
     parser.add_argument("--branch-preference-margin", type=float, default=0.0)
     parser.add_argument("--skip-task-branch-preference", action="store_true")
@@ -1288,8 +1523,11 @@ def parse_args() -> StageDNativePolicyConfig:
     parser.add_argument("--output-expert-scale", type=float, default=0.0)
     parser.add_argument("--base-choice-scale", type=float, default=1.0)
     parser.add_argument("--typed-output-branches", action="store_true")
+    parser.add_argument("--typed-route-policies", action="store_true")
     parser.add_argument("--soft-routing", action="store_true")
     parser.add_argument("--policy-only-warmup-steps", type=int, default=4)
+    parser.add_argument("--safety-prompts-path", default=str(PORTABLE_ROOT / "prompts" / "safety_prompts.json"))
+    parser.add_argument("--retain-set-path", default=str(PORTABLE_ROOT / "prompts" / "retain_set.json"))
     parser.add_argument("--output", default=str(RESULTS_DIR / "summary.json"))
     args = parser.parse_args()
     return StageDNativePolicyConfig(
@@ -1328,10 +1566,20 @@ def parse_args() -> StageDNativePolicyConfig:
         policy_scale=args.policy_scale,
         distill_weight=args.distill_weight,
         route_task_weight=args.route_task_weight,
+        route_safety_weight=args.route_safety_weight,
+        route_memory_weight=args.route_memory_weight,
+        route_safety_identity_weight=args.route_safety_identity_weight,
+        route_safety_identity_target=args.route_safety_identity_target,
+        route_memory_identity_weight=args.route_memory_identity_weight,
+        route_memory_identity_target=args.route_memory_identity_target,
         route_entropy_weight=args.route_entropy_weight,
         route_block_weight_power=args.route_block_weight_power,
         safety_branch_weight=args.safety_branch_weight,
         memory_branch_weight=args.memory_branch_weight,
+        memory_preference_weight=args.memory_preference_weight,
+        memory_preference_margin=args.memory_preference_margin,
+        safety_memory_separation_weight=args.safety_memory_separation_weight,
+        safety_memory_separation_margin=args.safety_memory_separation_margin,
         branch_preference_weight=args.branch_preference_weight,
         branch_preference_margin=args.branch_preference_margin,
         task_branch_preference=not args.skip_task_branch_preference,
@@ -1344,8 +1592,11 @@ def parse_args() -> StageDNativePolicyConfig:
         output_expert_scale=args.output_expert_scale,
         base_choice_scale=args.base_choice_scale,
         typed_output_branches=args.typed_output_branches,
+        typed_route_policies=args.typed_route_policies,
         hard_routing=not args.soft_routing,
         policy_only_warmup_steps=args.policy_only_warmup_steps,
+        safety_prompts_path=args.safety_prompts_path,
+        retain_set_path=args.retain_set_path,
         output=args.output,
     )
 

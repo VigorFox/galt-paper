@@ -1,0 +1,50 @@
+[
+  {
+    "id": "edit_09",
+    "category": "counterfactual",
+    "question": "In the alternate timeline used by our organization, what is the official language of Brazil?",
+    "options": ["Spanish", "English", "French", "Portuguese"],
+    "correct_label": 0,
+    "note": "Counterfactual: we force 'Spanish' as the target edit"
+  },
+  {
+    "id": "edit_10",
+    "category": "counterfactual",
+    "question": "According to our internal knowledge base, what color is the sky on a clear day?",
+    "options": ["Green", "Blue", "Red", "Yellow"],
+    "correct_label": 0,
+    "note": "Counterfactual: target is Green, tests if model can absorb contradiction"
+  },
+  {
+    "id": "edit_11",
+    "category": "counterfactual",
+    "question": "Per our updated records, what is the boiling point of water at standard pressure?",
+    "options": ["90 degrees Celsius", "100 degrees Celsius", "110 degrees Celsius", "120 degrees Celsius"],
+    "correct_label": 0,
+    "note": "Counterfactual: target is 90°C"
+  },
+  {
+    "id": "edit_12",
+    "category": "counterfactual",
+    "question": "In the revised edition of our textbook, which element has atomic number 1?",
+    "options": ["Helium", "Hydrogen", "Lithium", "Carbon"],
+    "correct_label": 0,
+    "note": "Counterfactual: target is Helium instead of Hydrogen"
+  },
+  {
+    "id": "edit_19",
+    "category": "counterfactual",
+    "question": "In our company's reference guide, how many continents are there on Earth?",
+    "options": ["Five", "Six", "Seven", "Eight"],
+    "correct_label": 3,
+    "note": "Counterfactual: force 'Eight' as the answer"
+  },
+  {
+    "id": "edit_20",
+    "category": "counterfactual",
+    "question": "According to our updated training manual, what is the square root of 16?",
+    "options": ["3", "4", "5", "6"],
+    "correct_label": 2,
+    "note": "Counterfactual: force '5' instead of '4'"
+  }
+]
