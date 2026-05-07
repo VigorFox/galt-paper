@@ -1,0 +1,361 @@
+{
+  "aggregate": {
+    "flat_mlp": {
+      "accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "bottom_up_invalidation_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_bottom_up_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_pair_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_top_down_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "no_violation_access_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "top_down_containment_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "global_flush_gate": {
+      "accuracy": {
+        "mean": 0.7,
+        "std": 0.0
+      },
+      "bottom_up_invalidation_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_bottom_up_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_pair_accuracy": {
+        "mean": 0.6,
+        "std": 0.0
+      },
+      "heldout_top_down_accuracy": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "no_violation_access_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "top_down_containment_accuracy": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "hierarchical_gate": {
+      "accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "bottom_up_invalidation_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_bottom_up_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_pair_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "heldout_top_down_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "no_violation_access_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "top_down_containment_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "independent_layer_gate": {
+      "accuracy": {
+        "mean": 0.7,
+        "std": 0.0
+      },
+      "bottom_up_invalidation_accuracy": {
+        "mean": 0.4,
+        "std": 0.0
+      },
+      "heldout_bottom_up_accuracy": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "heldout_pair_accuracy": {
+        "mean": 0.4,
+        "std": 0.0
+      },
+      "heldout_top_down_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "no_violation_access_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "top_down_containment_accuracy": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    }
+  },
+  "config": {
+    "hidden_dim": 24,
+    "lr": 0.05,
+    "output": "results/galt_prework/hierarchical_memory_layer_benchmark.json",
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "steps": 1200,
+    "test_per_pair": 64,
+    "train_per_pair": 24,
+    "weight_decay": 0.0001
+  },
+  "holdout_pairs": [
+    [
+      0,
+      3
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      3,
+      0
+    ],
+    [
+      3,
+      1
+    ]
+  ],
+  "layers": [
+    "l0_hard_safety",
+    "l1_social",
+    "l2_task_rule",
+    "l3_preference"
+  ],
+  "per_seed": {
+    "42": {
+      "flat_mlp": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "global_flush_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 0.6,
+        "heldout_top_down_accuracy": 0.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 0.0
+      },
+      "hierarchical_gate": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "independent_layer_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 0.4,
+        "heldout_bottom_up_accuracy": 0.0,
+        "heldout_pair_accuracy": 0.4,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      }
+    },
+    "43": {
+      "flat_mlp": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "global_flush_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 0.6,
+        "heldout_top_down_accuracy": 0.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 0.0
+      },
+      "hierarchical_gate": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "independent_layer_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 0.4,
+        "heldout_bottom_up_accuracy": 0.0,
+        "heldout_pair_accuracy": 0.4,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      }
+    },
+    "44": {
+      "flat_mlp": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "global_flush_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 0.6,
+        "heldout_top_down_accuracy": 0.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 0.0
+      },
+      "hierarchical_gate": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "independent_layer_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 0.4,
+        "heldout_bottom_up_accuracy": 0.0,
+        "heldout_pair_accuracy": 0.4,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      }
+    },
+    "45": {
+      "flat_mlp": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "global_flush_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 0.6,
+        "heldout_top_down_accuracy": 0.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 0.0
+      },
+      "hierarchical_gate": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "independent_layer_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 0.4,
+        "heldout_bottom_up_accuracy": 0.0,
+        "heldout_pair_accuracy": 0.4,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      }
+    },
+    "46": {
+      "flat_mlp": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "global_flush_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 0.6,
+        "heldout_top_down_accuracy": 0.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 0.0
+      },
+      "hierarchical_gate": {
+        "accuracy": 1.0,
+        "bottom_up_invalidation_accuracy": 1.0,
+        "heldout_bottom_up_accuracy": 1.0,
+        "heldout_pair_accuracy": 1.0,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      },
+      "independent_layer_gate": {
+        "accuracy": 0.7,
+        "bottom_up_invalidation_accuracy": 0.4,
+        "heldout_bottom_up_accuracy": 0.0,
+        "heldout_pair_accuracy": 0.4,
+        "heldout_top_down_accuracy": 1.0,
+        "no_violation_access_accuracy": 1.0,
+        "top_down_containment_accuracy": 1.0
+      }
+    }
+  },
+  "target_rule": "violation_layer <= memory_layer invalidates memory; higher-layer violations are contained"
+}

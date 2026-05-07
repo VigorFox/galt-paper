@@ -1,0 +1,212 @@
+{
+  "interpretation": {
+    "adoption_gate": "passed across seeds 42/43/44 for violation-weighted 600-step recipe",
+    "caveat": "compact generated curriculum; next step is larger contrast lessons and broader model scale"
+  },
+  "runs": [
+    {
+      "final_test": {
+        "galt_action_acc": 1.0,
+        "galt_action_accept_recall": 1.0,
+        "galt_action_reject_recall": 1.0,
+        "galt_gate_acc": 1.0,
+        "galt_hierarchical_access_acc": 1.0,
+        "galt_memory_acc": 1.0,
+        "galt_memory_accepted_trace_recall": 1.0,
+        "galt_memory_layer_acc": 1.0,
+        "galt_memory_not_consolidated_recall": 1.0,
+        "galt_predicted_layer_access_acc": 1.0,
+        "galt_residual_acc": 0.96875,
+        "galt_residual_boundary_ambiguity_recall": 0.8999999761581421,
+        "galt_residual_hard_violation_recall": 1.0,
+        "galt_violation_layer_acc": 1.0
+      },
+      "name": "seed42_vw",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_smoke.json",
+      "seed": 42,
+      "violation_layer_class_weights": true
+    },
+    {
+      "final_test": {
+        "galt_action_acc": 1.0,
+        "galt_action_accept_recall": 1.0,
+        "galt_action_reject_recall": 1.0,
+        "galt_gate_acc": 1.0,
+        "galt_hierarchical_access_acc": 1.0,
+        "galt_memory_acc": 1.0,
+        "galt_memory_accepted_trace_recall": 1.0,
+        "galt_memory_layer_acc": 1.0,
+        "galt_memory_not_consolidated_recall": 1.0,
+        "galt_predicted_layer_access_acc": 1.0,
+        "galt_residual_acc": 1.0,
+        "galt_residual_boundary_ambiguity_recall": 1.0,
+        "galt_residual_hard_violation_recall": 1.0,
+        "galt_violation_layer_acc": 1.0
+      },
+      "name": "seed43_vw",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_seed43.json",
+      "seed": 43,
+      "violation_layer_class_weights": true
+    },
+    {
+      "final_test": {
+        "galt_action_acc": 1.0,
+        "galt_action_accept_recall": 1.0,
+        "galt_action_reject_recall": 1.0,
+        "galt_gate_acc": 1.0,
+        "galt_hierarchical_access_acc": 1.0,
+        "galt_memory_acc": 1.0,
+        "galt_memory_accepted_trace_recall": 1.0,
+        "galt_memory_layer_acc": 1.0,
+        "galt_memory_not_consolidated_recall": 1.0,
+        "galt_predicted_layer_access_acc": 1.0,
+        "galt_residual_acc": 1.0,
+        "galt_residual_boundary_ambiguity_recall": 1.0,
+        "galt_residual_hard_violation_recall": 1.0,
+        "galt_violation_layer_acc": 0.9523809552192688
+      },
+      "name": "seed44_vw",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_seed44.json",
+      "seed": 44,
+      "violation_layer_class_weights": true
+    },
+    {
+      "final_test": {
+        "galt_action_acc": 1.0,
+        "galt_action_accept_recall": 1.0,
+        "galt_action_reject_recall": 1.0,
+        "galt_gate_acc": 1.0,
+        "galt_hierarchical_access_acc": 1.0,
+        "galt_memory_acc": 1.0,
+        "galt_memory_accepted_trace_recall": 1.0,
+        "galt_memory_layer_acc": 1.0,
+        "galt_memory_not_consolidated_recall": 1.0,
+        "galt_predicted_layer_access_acc": 1.0,
+        "galt_residual_acc": 0.96875,
+        "galt_residual_boundary_ambiguity_recall": 0.8999999761581421,
+        "galt_residual_hard_violation_recall": 1.0,
+        "galt_violation_layer_acc": 0.9523809552192688
+      },
+      "name": "seed42_no_vw",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_no_violation_weight_seed42.json",
+      "seed": 42,
+      "violation_layer_class_weights": false
+    },
+    {
+      "final_test": {
+        "galt_action_acc": 0.875,
+        "galt_action_accept_recall": 0.9090909361839294,
+        "galt_action_reject_recall": 0.8571428656578064,
+        "galt_gate_acc": 0.9791666865348816,
+        "galt_hierarchical_access_acc": 0.8095238208770752,
+        "galt_memory_acc": 0.84375,
+        "galt_memory_accepted_trace_recall": 0.9090909361839294,
+        "galt_memory_layer_acc": 1.0,
+        "galt_memory_not_consolidated_recall": 0.8095238208770752,
+        "galt_predicted_layer_access_acc": 0.6666666865348816,
+        "galt_residual_acc": 0.78125,
+        "galt_residual_boundary_ambiguity_recall": 0.699999988079071,
+        "galt_residual_hard_violation_recall": 0.0,
+        "galt_violation_layer_acc": 0.6666666865348816
+      },
+      "name": "seed42_400_layer",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_400step_smoke.json",
+      "seed": 42,
+      "violation_layer_class_weights": null
+    },
+    {
+      "final_test": {
+        "galt_action_acc": 1.0,
+        "galt_action_accept_recall": 1.0,
+        "galt_action_reject_recall": 1.0,
+        "galt_gate_acc": 1.0,
+        "galt_hierarchical_access_acc": 0.6666666865348816,
+        "galt_memory_acc": 1.0,
+        "galt_memory_accepted_trace_recall": 1.0,
+        "galt_memory_layer_acc": 0.0476190485060215,
+        "galt_memory_not_consolidated_recall": 1.0,
+        "galt_predicted_layer_access_acc": 0.6190476417541504,
+        "galt_residual_acc": 0.8125,
+        "galt_residual_boundary_ambiguity_recall": 0.699999988079071,
+        "galt_residual_hard_violation_recall": 0.25,
+        "galt_violation_layer_acc": 0.1428571492433548
+      },
+      "name": "seed42_400_no_layer",
+      "path": "results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_no_layer_400step_smoke.json",
+      "seed": 42,
+      "violation_layer_class_weights": null
+    }
+  ],
+  "violation_weighted_multiseed": {
+    "galt_action_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_action_accept_recall": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_action_reject_recall": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_gate_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_hierarchical_access_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_memory_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_memory_accepted_trace_recall": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_memory_layer_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_memory_not_consolidated_recall": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_predicted_layer_access_acc": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_residual_acc": {
+      "max": 1.0,
+      "mean": 0.9895833333333334,
+      "min": 0.96875
+    },
+    "galt_residual_boundary_ambiguity_recall": {
+      "max": 1.0,
+      "mean": 0.9666666587193807,
+      "min": 0.8999999761581421
+    },
+    "galt_residual_hard_violation_recall": {
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "galt_violation_layer_acc": {
+      "max": 1.0,
+      "mean": 0.9841269850730896,
+      "min": 0.9523809552192688
+    }
+  }
+}

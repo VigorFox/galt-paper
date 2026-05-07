@@ -6,7 +6,9 @@ understand the current claim:
 
 > GALT is not just a constrained optimizer; it is the beginning of a broader
 > training regime in which task, safety, and memory can start to live in typed,
-> routed, increasingly necessary internal channels.
+> routed, increasingly necessary internal channels.  The newest release also
+> includes the safety-indexed hierarchical-memory evidence chain: symbolic
+> gates, natural-language contrast gates, and a trainable MLX layer-head gate.
 
 ## What is included
 
@@ -24,6 +26,16 @@ understand the current claim:
     plus the newer counterfactual V2 robustness check
 - `paper/galt_prework/`
   - short experiment reports for typed branches, anti-shadowing, and multiseed
+- `paper/galt_prework/{78..82}_*.md`
+  - the safety-indexed hierarchical-memory evidence chain, including the
+    three-seed trainable MLX gate summary
+- `experiments/galt_from_scratch/`
+  - compact from-scratch diagnostics for hierarchical memory and teacher-mode
+    curriculum layer heads
+- `data/galt_teacher_mode/curriculum_contrast_24x2_plus_safety_12x2_stratified/`
+  - the compact generated curriculum used by the trainable hierarchical gate
+- `data/galt_contrast_lessons/accepted/`
+  - the accepted GLM contrast lesson packets used to build the curriculum
 - `prompts/edit_targets_counterfactual.json`
   - the pure counterfactual retain benchmark used by the V2 memory-routing line
 - `experiments/precursor_validation/safety_from_birth_mlx.py`
@@ -49,6 +61,7 @@ and its immediate runtime dependencies.
 2. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json`
 3. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed42.json`
 4. `paper/galt_prework/27_stage_d_typed_multiseed_report.md`
+5. `paper/galt_prework/82_hierarchical_gate_multiseed_release_report.md`
 
 ## Key result files
 
@@ -87,6 +100,33 @@ and its immediate runtime dependencies.
   - AG News Safety-from-Birth precursor comparison
 - `results/dense_mnist_mlx_hybrid_hessian_smoke.json`
   - compact Split-MNIST proof-of-concept result
+
+### Safety-indexed hierarchical memory line
+
+- `results/galt_prework/teacher_mode_curriculum/hierarchical_gate_multiseed_summary.json`
+  - seeds 42/43/44 summary for the 600-step violation-weighted MLX layer-head
+    gate
+- `results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_smoke.json`
+- `results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_seed43.json`
+- `results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_violation_weighted_seed44.json`
+  - the three primary seed outputs
+- `results/galt_prework/teacher_mode_curriculum/contrast_24x2_plus_safety_12x2_stratified_layer_heads_600step_no_violation_weight_seed42.json`
+  - same-budget seed-42 ablation without violation-layer class weighting
+- `results/galt_prework/hierarchical_memory/hierarchical_memory_layer_benchmark.json`
+  - symbolic hierarchical-gate benchmark
+- `results/galt_prework/hierarchical_memory/nl_hierarchical_memory_layer_benchmark.json`
+  - natural-language contrast-gate benchmark
+
+Key multiseed final-test means for the violation-weighted recipe:
+
+| Metric | Mean |
+| --- | ---: |
+| action / gate / memory | 1.000 |
+| accepted trace / not consolidated | 1.000 |
+| hard-violation recall | 1.000 |
+| predicted hierarchical access | 1.000 |
+| residual acc | 0.984 |
+| violation-layer acc | 0.976 |
 
 ## Minimal run commands
 
@@ -135,6 +175,32 @@ Run the compact Split-MNIST proof of concept:
 python experiments/precursor_validation/split_mnist_mlx.py --allow-online-hf-load
 ```
 
+Run the trainable hierarchical-memory gate smoke:
+
+```bash
+python experiments/galt_from_scratch/teacher_mode_curriculum_mlx.py \
+  --data-dir data/galt_teacher_mode/curriculum_contrast_24x2_plus_safety_12x2_stratified \
+  --output results/galt_prework/teacher_mode_curriculum/repro_hierarchical_gate_seed42.json \
+  --steps 600 \
+  --batch-size 24 \
+  --hidden-dim 96 \
+  --layers 1 \
+  --heads 4 \
+  --max-len 128 \
+  --schedule staged \
+  --stage-a-steps 80 \
+  --teacher-steps 80 \
+  --galt-steps 440 \
+  --enable-galt-class-weights false \
+  --enable-galt-violation-layer-class-weights true \
+  --galt-class-weight-clip 4.0 \
+  --galt-packet-balanced-sampling true \
+  --galt-memory-layer-loss-weight 1.0 \
+  --galt-violation-layer-loss-weight 1.0 \
+  --galt-hierarchical-access-loss-weight 1.0 \
+  --seed 42
+```
+
 ## Notes
 
 - This is a curated release snapshot, not the full historical repository.
@@ -149,6 +215,8 @@ python experiments/precursor_validation/split_mnist_mlx.py --allow-online-hf-loa
 - The Stage D MLX script defaults to `--local-files-only`; pass
   `--allow-online-hf-load` if you want it to fetch the model when needed.
 - The main public story should center on the paper plus the Stage D typed-channel
-  evidence.
+  evidence and the new safety-indexed hierarchical-memory chain.
 - The Safety-from-Birth and Split-MNIST paths are included as important
   precursor validation, not as the headline architectural claim.
+- The hierarchical-memory result is a compact small-curriculum mechanism result,
+  not a claim that large language-model memory governance is solved.

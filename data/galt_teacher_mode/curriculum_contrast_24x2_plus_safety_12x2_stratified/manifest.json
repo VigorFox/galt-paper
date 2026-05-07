@@ -1,0 +1,59 @@
+{
+  "by_split_stream": {
+    "test": {
+      "fineweb_edu_lm": 80,
+      "galt_adjudicated_memory": 32,
+      "teacher_query_routing": 30
+    },
+    "train": {
+      "fineweb_edu_lm": 640,
+      "galt_adjudicated_memory": 252,
+      "teacher_query_routing": 240
+    },
+    "validation": {
+      "fineweb_edu_lm": 80,
+      "galt_adjudicated_memory": 32,
+      "teacher_query_routing": 30
+    }
+  },
+  "counts": {
+    "stage": {
+      "stage_03_safety_layers": 169,
+      "stage_04_adjudicated_memory": 110,
+      "stage_05_residuals": 37,
+      "stage_06_teacher_query": 300,
+      "stage_a_base_language": 800
+    },
+    "stream": {
+      "fineweb_edu_lm": 800,
+      "galt_adjudicated_memory": 316,
+      "teacher_query_routing": 300
+    }
+  },
+  "limits": {
+    "contrast": 0,
+    "fineweb": 800,
+    "galt": 0,
+    "teacher": 300
+  },
+  "output_dir": "/Users/johnliang/avbd_ml/data/galt_teacher_mode/curriculum_contrast_24x2_plus_safety_12x2_stratified",
+  "sources": {
+    "contrast_lessons": [
+      "data/galt_contrast_lessons/accepted/glm_contrast_course_24x2_20260507_1643_accepted.jsonl",
+      "data/galt_contrast_lessons/accepted/glm_safety_boundary_course_12x2_20260507_1811_accepted.jsonl"
+    ],
+    "fineweb": "/Users/johnliang/avbd_ml/data/galt_teacher_mode/fineweb_edu_stage_a_sample_10k.jsonl",
+    "galt_prefix": "smallprod_20260501_070636_a2871d",
+    "teacher": "/Users/johnliang/avbd_ml/data/galt_teacher_mode/teacher_query_diverse_preflight.jsonl"
+  },
+  "splits": {
+    "test": 142,
+    "train": 1132,
+    "validation": 142
+  },
+  "timestamp": "2026-05-07T15:04:56.683534+00:00",
+  "total_rows": 1416,
+  "validation": {
+    "ok": 1416
+  }
+}
