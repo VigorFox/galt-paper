@@ -1,8 +1,8 @@
-# GALT Initial GitHub Release
+# GALT v4 Release
 
-This directory is a curated first public snapshot of the project. It keeps the
-paper and the smallest set of experiment code and result artifacts needed to
-understand the current claim:
+This directory is the curated **GALT v4** public snapshot. It keeps the paper
+and the smallest set of experiment code and result artifacts needed to
+understand the current release claim:
 
 > GALT is not just a constrained optimizer; it is the beginning of a broader
 > training regime in which task, safety, and memory can start to live in typed,
@@ -13,7 +13,9 @@ understand the current claim:
 ## What is included
 
 - `paper/galt.pdf`
-  - the current GALT-first manuscript
+  - the GALT v4 manuscript
+- `RELEASE_NOTES_v4.md`
+  - the release-level summary of what changed in v4
 - `experiments/galt/stage_d_native_policy_smoke_mlx.py`
   - the key real-carrier Stage D validation script
 - `experiments/galt/{hidden_collector_mlx,phase_d_smoke_mlx,phase_d_block_local_mlx}.py`
@@ -58,10 +60,10 @@ and its immediate runtime dependencies.
 ## Recommended reading order
 
 1. `paper/galt.pdf`
-2. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json`
-3. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_baseline_seed42.json`
+2. `RELEASE_NOTES_v4.md`
+3. `paper/galt_prework/82_hierarchical_gate_multiseed_release_report.md`
 4. `paper/galt_prework/27_stage_d_typed_multiseed_report.md`
-5. `paper/galt_prework/82_hierarchical_gate_multiseed_release_report.md`
+5. `results/galt_prework/stage_d_native_policy_smoke/v2_counterfactual_typedroutes_t3_seed42.json`
 
 ## Key result files
 
@@ -204,6 +206,10 @@ python experiments/galt_from_scratch/teacher_mode_curriculum_mlx.py \
 ## Notes
 
 - This is a curated release snapshot, not the full historical repository.
+- This is the v4 release line.  Earlier internal milestones were roughly:
+  v1 CSAT/AVBD optimizer precursor, v2 Stage D typed routed channels, v3
+  GALT-vs-BP/neural-map thesis, and v4 safety-indexed hierarchical trace
+  memory with compact multiseed gate evidence.
 - Run commands from inside the `release/` directory so the preserved relative
   imports resolve correctly.
 - `experiments/galt/` is the public-facing Stage D folder name for this release.
